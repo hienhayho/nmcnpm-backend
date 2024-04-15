@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../../user/entities/user.entity";
 import { Room } from "../../room/entities/room.entity";
 import { Bill } from "../../bill/entities/bill.entity";
@@ -28,6 +28,7 @@ export class RoomDetail {
     discount: number
 
     @OneToOne(()=>Bill)
+    @JoinColumn()
     bill: Bill
     
     @OneToMany(()=>ServicesUsed, (services_used)=> services_used.roomDetail)

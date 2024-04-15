@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { RoomDetail } from "../../room_detail/entities/room_detail.entity";
 import { Service } from "../../services/entities/service.entity";
 
@@ -6,7 +6,7 @@ import { Service } from "../../services/entities/service.entity";
 export class ServicesUsed {
     @PrimaryGeneratedColumn("identity")
     servicesUsed: number
-    
+
     @ManyToOne(()=>RoomDetail)
     roomDetail: RoomDetail
 
