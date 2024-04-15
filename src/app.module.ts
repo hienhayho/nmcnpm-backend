@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './v1/database/user/user.module';
+import { RoleModule } from './v1/database/role/role.module';
 
 @Module({
   imports: [
@@ -23,8 +24,9 @@ import { UserModule } from './v1/database/user/user.module';
       }),
     }),
     UserModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

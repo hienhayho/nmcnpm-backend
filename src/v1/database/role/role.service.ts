@@ -10,14 +10,25 @@ export class RoleService {
   constructor(
     @InjectRepository(Role)
     private roleService: Repository<Role>
-  ){}
+  ) { }
 
-  getAllRole() {
-    const roleDetail = this.roleService.findAndCount()
-    if(!roleDetail) throw new BadRequestException({ error : "Data Not Found" });
+  async getAllRole() {
+    const roleDetail = await this.roleService.findAndCount()
+    if (!roleDetail) throw new BadRequestException({ error: "Data Not Found" });
     return {
-      status  : HttpStatus.OK,
-      result : roleDetail
+      status: HttpStatus.OK,
+      data: roleDetail
+    }
+  }
+
+  async createRole(roleData: CreateRoleDto) {
+    const roleDetail = await this.roleService.create(roleData);
+    this.roleService.save(roleDetail);
+    if (!roleDetail) throw new BadRequestException({ error: "Role Not Created" });
+    return {
+      status: HttpStatus.OK,
+      message: "Role Created Successfully",
+      data: roleDetail
     }
   }
 }
