@@ -11,8 +11,6 @@ export class RoleController {
 
   @Get()
   getAllRole() {
-    const allData = this.roleService.getAllRole();
-    console.log(allData)
     return this.roleService.getAllRole();
   }
 
