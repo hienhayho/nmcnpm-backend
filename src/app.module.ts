@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './v1/database/user/user.module';
 import { RoleModule } from './v1/database/role/role.module';
+import { AppLoggerMiddleware } from './middlware/request.logging';
 
 @Module({
   imports: [
@@ -29,4 +30,9 @@ import { RoleModule } from './v1/database/role/role.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule { 
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+  }
+ }
+
