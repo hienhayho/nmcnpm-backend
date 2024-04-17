@@ -16,13 +16,13 @@ export class User {
   phone: string;
 
   @Column()
-  gender: string;
+  gender: number;
 
   @Column()
   email: string;
 
   @Column()
-  fullname: string;
+  fullName: string;
 
   @Column()
   salary: number;

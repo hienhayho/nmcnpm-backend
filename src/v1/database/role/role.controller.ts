@@ -1,8 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
-import { ApiTags } from '@nestjs/swagger';
 
 @Controller('v1/role')
 @ApiTags('v1/role')
@@ -18,5 +17,4 @@ export class RoleController {
   createRole(@Body() roleData: CreateRoleDto) {
     return this.roleService.createRole(roleData);
   }
-
 }
