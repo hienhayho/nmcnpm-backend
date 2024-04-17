@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from '../../role/entities/role.entity';
 
 @Entity()
@@ -6,7 +6,7 @@ export class User {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   userName: string;
 
   @Column()
@@ -18,7 +18,7 @@ export class User {
   @Column()
   gender: number;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   email: string;
 
   @Column()
@@ -27,7 +27,7 @@ export class User {
   @Column()
   salary: number;
 
-  @Column()
+  @Column({ default: null })
   field: null | number;
 
   @Column()
