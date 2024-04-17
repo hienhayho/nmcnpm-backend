@@ -1,11 +1,9 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { UserModule } from './v1/database/user/user.module';
 import { RoleModule } from './v1/database/role/role.module';
-import { AppLoggerMiddleware } from './middlware/request.logging';
+import { AppLoggerMiddleware } from './middleware/request.logging';
 import { AuthModule } from './v1/auth/auth.module';
 
 @Module({
@@ -29,8 +27,8 @@ import { AuthModule } from './v1/auth/auth.module';
     UserModule,
     RoleModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  // controllers: [AppController],
+  // providers: [AppService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer): void {
