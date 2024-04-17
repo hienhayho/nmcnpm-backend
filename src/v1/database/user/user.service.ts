@@ -44,7 +44,7 @@ export class UserService {
     const user = await this.userService.findBy({
       userName:userName,
     })
-    if (!user){
+    if (user.length === 0){
       throw new Error("invalid authentication credentials")
     }
     const isMatch = await bcrypt.compare(userInfo.password,user[0].password)
@@ -52,7 +52,10 @@ export class UserService {
       throw new Error("invalid authentication credentials")
     }
 
-    return user
+    const userId = String(user[0].id)
+    const saltOrRounds = parseInt(process.env.SALT)
+    const access_token = await bcrypt.hash(userId,saltOrRounds)
+    return access_token
   }
 }
 

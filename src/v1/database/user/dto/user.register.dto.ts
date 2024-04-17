@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString, Max, Min } from "class-validator";
+import { IsEmail, IsNumber, IsString, Max, Min } from "class-validator";
 import { Role } from "../../role/entities/role.entity";
 
 
@@ -17,7 +17,7 @@ export class UserRegister {
     })
     password: string;
 
-    @IsString()
+    @IsEmail()
     @ApiProperty({
         type: String
     })
