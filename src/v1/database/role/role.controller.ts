@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpStatus } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -9,12 +9,44 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) { }
 
   @Get()
-  getAllRole() {
-    return this.roleService.getAllRole();
+  async getAllRole() {
+    try {
+      const roles = await this.roleService.getAllRole();
+      if (roles) {
+        return {
+          status: HttpStatus.OK,
+          error: 0,
+          message: "Get all roles successfully",
+          roles: roles[0]
+        }
+      }
+    } catch (err) {
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.message
+      }
+    }
   }
 
   @Post()
-  createRole(@Body() roleData: CreateRoleDto) {
-    return this.roleService.createRole(roleData);
+  async createRole(@Body() roleData: CreateRoleDto) {
+    try {
+      const role = await this.roleService.createRole(roleData);
+      if (role) {
+        return {
+          status: HttpStatus.CREATED,
+          error: 0,
+          message: "Create a role successfully",
+          role: role,
+        }
+      }
+    } catch (err) {
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.message
+      }
+    }
   }
 }
