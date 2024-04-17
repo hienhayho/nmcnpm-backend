@@ -68,7 +68,7 @@ export class UserRegister {
     country: string;
 
     @ApiProperty({
-        type: Role
+        type: Number
     })
-    role: Role;
+    roleId: number;
 }
