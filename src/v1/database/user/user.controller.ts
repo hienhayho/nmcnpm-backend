@@ -1,4 +1,5 @@
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import { Response } from "express";
 import { UserService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UserRegister } from './dto/user.register.dto';
@@ -42,13 +43,14 @@ export class UserController {
     }
 
     @Post("login")
-    async login(@Body() userInfo: UserLogin) {
+    async login(@Res({ passthrough: true }) response: Response,@Body() userInfo: UserLogin) {
         try {
-            const result = await this.userService.login(userInfo)
-            if (result) {
+            const access_token = await this.userService.login(userInfo)
+            if (access_token) {
+                response.cookie("access_token", access_token)
                 return {
                     status: HttpStatus.OK,
-                    authentication_token: "TESTING"
+                    authentication_token: access_token
                 }
             } 
             return {
@@ -57,6 +59,7 @@ export class UserController {
             }
             
         } catch (err) {
+            console.log(err.message)
             if (err.message == "invalid authentication credentials"){
                 return {
                     status: HttpStatus.UNPROCESSABLE_ENTITY,
