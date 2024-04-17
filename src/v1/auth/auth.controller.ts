@@ -1,5 +1,5 @@
 import { Body, Controller, HttpStatus, Post, Res } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Response } from "express";
 import { LoginService } from './login/login.service';
 import { RegisterService } from './register/register.service';
@@ -14,6 +14,7 @@ export class AuthController {
         private readonly registerService: RegisterService
     ) { }
 
+    @ApiOperation({ summary: "User login." })
     @Post("login")
     async login(@Res({ passthrough: true }) response: Response, @Body() userInfo: UserLogin) {
         try {
@@ -49,6 +50,7 @@ export class AuthController {
         }
     }
 
+    @ApiOperation({ summary: "User register." })
     @Post("register")
     async register(@Body() userRegister: UserRegister) {
         try {

@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, HttpStatus } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 
@@ -8,6 +8,7 @@ import { CreateRoleDto } from './dto/create-role.dto';
 export class RoleController {
   constructor(private readonly roleService: RoleService) { }
 
+  @ApiOperation({ summary: "Get all roles." })
   @Get()
   async getAllRole() {
     try {
@@ -29,6 +30,7 @@ export class RoleController {
     }
   }
 
+  @ApiOperation({ summary: "Create a new user." })
   @Post()
   async createRole(@Body() roleData: CreateRoleDto) {
     try {
