@@ -19,5 +19,5 @@ export class Room {
     roomListNumbers: number[];
 
     @OneToMany(()=>Service, (service)=>service.room)
-    services: number[];
+    services: Service[];
 }
