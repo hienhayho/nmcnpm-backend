@@ -24,17 +24,14 @@ export class RegisterService {
         }
 
         const password = userInfo.password;
-
         const saltOrRounds = parseInt(process.env.SALT)
         const hashPassword = await bcrypt.hash(password, saltOrRounds);
-
 
         const user = {
             ...userInfo,
             password: hashPassword,
             role: role[0]
         }
-
         return this.userService.save(user)
     }
 }

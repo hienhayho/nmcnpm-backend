@@ -3,8 +3,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthController } from "./auth.controller";
 import { LoginService } from "./login/login.service";
 import { RegisterService } from "./register/register.service";
-import { Role } from "../database/role/entities/role.entity";
-import { User } from "../database/user/entities/user.entity";
+import { Role } from "@/v1/database/role/entities/role.entity";
+import { User } from "@/v1/database/user/entities/user.entity";
 
 @Module({
     imports: [TypeOrmModule.forFeature([User, Role])],

@@ -12,15 +12,5 @@ services:
     ports:
       - ${POSTGRES_PORT}:5432
 
-  pg-admin:
-    image: dpage/pgadmin4
-    restart: unless-stopped
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-      - PGADMIN_LISTEN_PORT=5050
-    ports:
-      - 5050:5050
-
 volumes:
   data:

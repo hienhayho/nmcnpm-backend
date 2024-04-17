@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from '../../role/entities/role.entity';
+import { Max, Min } from 'class-validator';
 
 @Entity()
 export class User {
@@ -16,6 +17,8 @@ export class User {
   phone: string;
 
   @Column()
+  @Min(1)
+  @Max(3)
   gender: number;
 
   @Column({ unique: true })
