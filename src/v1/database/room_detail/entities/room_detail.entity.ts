@@ -3,6 +3,7 @@ import { User } from "../../user/entities/user.entity";
 import { Room } from "../../room/entities/room.entity";
 import { Bill } from "../../bill/entities/bill.entity";
 import { ServicesUsed } from "../../services_used/entities/services_used.entity";
+import { CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class RoomDetail {
@@ -33,4 +34,10 @@ export class RoomDetail {
     
     @OneToMany(()=>ServicesUsed, (services_used)=> services_used.roomDetail)
     services_used: ServicesUsed[]
+
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)'})
+    createdAt: Date
+
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)', onUpdate: 'CURRENT_TIMESTAMP(6)'})
+    updatedAt: Date
 }

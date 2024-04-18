@@ -1,6 +1,6 @@
 ## Hotel Management API
 
-### Intallation
+### Installation
 ```bash
 npm i
 

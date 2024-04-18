@@ -34,7 +34,7 @@ export class AuthController {
             }
 
         } catch (err) {
-            console.log(err.message)
+            console.log("auth.controller.ts - login: ", err)
             if (err.message == "invalid authentication credentials") {
                 return {
                     status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -71,7 +71,7 @@ export class AuthController {
 
         }
         catch (err) {
-            console.log("user.controller.ts addNewUser: ", err.message)
+            console.log("auth.controller.ts - register: ", err)
             if (err.message == "bad request") {
                 return {
                     status: HttpStatus.BAD_REQUEST,
