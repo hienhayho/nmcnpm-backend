@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNumber, IsString, Max, Min } from "class-validator";
+import { IsDate, IsEmail, IsNumber, IsString, Max, Min } from "class-validator";
 
 export class UserRegister {
     @IsString()
@@ -65,8 +65,21 @@ export class UserRegister {
     })
     country: string;
 
+    @IsNumber()
     @ApiProperty({
         type: Number
     })
     roleId: number;
+
+    @IsDate()
+    @ApiProperty({
+        type: Date
+    })
+    createdAt: Date;
+
+    @IsDate()
+    @ApiProperty({
+        type: Date
+    })
+    updatedAt: Date;
 }
