@@ -1,5 +1,6 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { User } from "../../user/entities/user.entity";
 
 @Entity()
 export class Bill {
@@ -9,11 +10,8 @@ export class Bill {
     @Column()
     priceAll: number
 
-    @Column()
-    fullName: string
-
-    @Column()
-    phone: string
+    @ManyToOne(() => User)
+    user: User
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)'})
     createdAt: Date

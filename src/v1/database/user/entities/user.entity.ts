@@ -31,9 +31,6 @@ export class User {
   @Column()
   salary: number;
 
-  @Column({ default: null })
-  field: null | number;
-
   @Column()
   city: string
 
