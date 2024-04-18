@@ -13,16 +13,4 @@ export class CreateRoleDto {
         type: String
     })
     name: string;
-
-    @IsDate() 
-    @ApiProperty({
-        type: Date
-    })
-    createdAt: Date;
-
-    @IsDate()
-    @ApiProperty({
-        type: Date
-    })
-    updatedAt: Date;
 }

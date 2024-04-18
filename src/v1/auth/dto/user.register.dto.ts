@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsEmail, IsNumber, IsString, Max, Min } from "class-validator";
+import { IsEmail, IsNumber, IsString, Max, Min } from "class-validator";
 
 export class UserRegister {
     @IsString()
@@ -11,7 +11,8 @@ export class UserRegister {
     @IsString()
     @Min(8)
     @ApiProperty({
-        type: String
+        type: String,
+        minLength: 8,
     })
     password: string;
 
@@ -47,12 +48,6 @@ export class UserRegister {
     })
     salary: number;
 
-    @IsNumber()
-    @ApiProperty({
-        type: Number
-    })
-    field: number;
-
     @IsString()
     @ApiProperty({
         type: String
@@ -64,22 +59,4 @@ export class UserRegister {
         type: String
     })
     country: string;
-
-    @IsNumber()
-    @ApiProperty({
-        type: Number
-    })
-    roleId: number;
-
-    @IsDate()
-    @ApiProperty({
-        type: Date
-    })
-    createdAt: Date;
-
-    @IsDate()
-    @ApiProperty({
-        type: Date
-    })
-    updatedAt: Date;
 }

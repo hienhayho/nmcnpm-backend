@@ -1,4 +1,17 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateRoleDto } from './create-role.dto';
+import { IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateRoleDto extends PartialType(CreateRoleDto) {}
+
+export class UpdateRole {
+    @IsNumber()
+    @ApiProperty({
+        type: Number
+    })
+    id: number;
+
+    @IsString()
+    @ApiProperty({
+        type: String
+    })
+    name: string;
+}

@@ -7,7 +7,7 @@ import { UserLogin } from "./dto/user.login.dto";
 import { UserRegister } from "./dto/user.register.dto";
 
 @Controller('v1/auth')
-@ApiTags("v1/auth")
+@ApiTags("auth")
 export class AuthController {
     constructor(
         private readonly loginService: LoginService,
@@ -71,18 +71,11 @@ export class AuthController {
 
         }
         catch (err) {
-            console.log("auth.controller.ts - register: ", err)
-            if (err.message == "bad request") {
-                return {
-                    status: HttpStatus.BAD_REQUEST,
-                    error: 1,
-                    message: err.message,
-                }
-            }
+            console.error("auth.controller.ts - register: ", err)
             return {
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
+                status: err.status,
                 error: 1,
-                message: err.message,
+                message: err.response.message,
             }
         }
     }

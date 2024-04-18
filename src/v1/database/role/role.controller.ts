@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, HttpStatus, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpStatus, Patch, Delete, Param } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { DeleteRoleDto } from './dto/delete-role.dto';
+import { UpdateRole } from './dto/update-role.dto';
 
 @Controller('v1/role')
-@ApiTags('v1/role')
+@ApiTags('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) { }
 
@@ -18,12 +18,12 @@ export class RoleController {
         return {
           status: HttpStatus.OK,
           error: 0,
-          message: "Get all roles successfully",
+          message: "Get all roles successfully.",
           roles: roles[0]
         }
       }
     } catch (err) {
-      console.log("role.controller.ts - getAllRole: ", err)
+      console.error("role.controller.ts - getAllRole: ", err)
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         error: 1,
@@ -32,7 +32,7 @@ export class RoleController {
     }
   }
 
-  @ApiOperation({ summary: "Create a new user." })
+  @ApiOperation({ summary: "Create a new role." })
   @Post()
   async createRole(@Body() roleData: CreateRoleDto) {
     try {
@@ -46,43 +46,42 @@ export class RoleController {
         }
       }
     } catch (err) {
-      console.log("role.controller.ts - createRole: ", err)
+      console.error("role.controller.ts - createRole: ", err)
       return {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        status: err.status,
         error: 1,
-        message: err.message
+        message: err.response.message
       }
     }
   }
 
   @ApiOperation({ summary: "Update a role by Id." })
   @Patch()
-  async updateRole(@Body() roleData: CreateRoleDto) {
+  async updateRole(@Body() roleData: UpdateRole) {
     try {
       const role = await this.roleService.updateRole(roleData);
       if (role) {
         return {
           status: HttpStatus.OK,
           error: 0,
-          message: "Update a role successfully",
+          message: "Update a role successfully.",
           role: role,
         }
       }
     } catch (err) {
-      console.log("role.controller.ts - updateRole: ", err)
+      console.error("role.controller.ts - updateRole: ", err)
       return {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        status: err.status,
         error: 1,
-        message: err.message
+        message: err.response.message
       }
     }
   }
 
-  @ApiOperation({ summary: "Delete a role." })
-  @Delete()
-  async deleteRole(@Body() roleData: DeleteRoleDto) {
+  @ApiOperation({ summary: "Delete a role by Id." })
+  @Delete(":id")
+  async deleteRole(@Param("id") roleId: number) {
     try {
-      const roleId = roleData.id;
       const role = await this.roleService.deleteRole(roleId);
       if (role) {
         return {
@@ -93,11 +92,11 @@ export class RoleController {
         }
       }
     } catch (err) {
-      console.log("role.controller.ts - deleteRole: ", err)
+      console.error("role.controller.ts - deleteRole: ", err)
       return {
         status: err.status,
         error: 1,
-        message: err.response.error
+        message: err.response.message
       }
     }
   }
