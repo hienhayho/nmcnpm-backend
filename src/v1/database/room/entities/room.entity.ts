@@ -1,23 +1,18 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Service } from "../../services/entities/service.entity";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { RoomType } from "../../room_type/entities/room_type.entity";
+import { CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Room {
     @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column()
-    name: string;
+    @ManyToOne(() => RoomType)
+    roomType: RoomType
 
-    @Column()
-    capacity: number;
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)'})
+    createdAt: Date
 
-    @Column()
-    base_price: number;
-
-    @Column("int", { array: true })
-    roomListNumbers: number[];
-
-    @OneToMany(()=>Service, (service)=>service.room)
-    services: Service[];
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)', onUpdate: 'CURRENT_TIMESTAMP(6)'})
+    updatedAt: Date    
 }

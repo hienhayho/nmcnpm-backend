@@ -1,5 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Room } from "../../room/entities/room.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { RoomType } from "../../room_type/entities/room_type.entity";
 
 @Entity()
 export class Service {
@@ -12,6 +12,12 @@ export class Service {
     @Column()
     price: number;
 
-    @ManyToOne(()=>Room,(room)=>room.services)
-    room: Room
+    @ManyToOne(() => RoomType, {onDelete: "CASCADE"})
+    roomType: RoomType
+
+    @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)'})
+    createdAt: Date;
+
+    @UpdateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)', onUpdate: 'CURRENT_TIMESTAMP(6)'})
+    updatedAt: Date;
 }
