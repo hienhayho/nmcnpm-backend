@@ -3,7 +3,7 @@ import { CreateDateColumn, UpdateDateColumn } from "typeorm";
 import * as moment from "moment-timezone";
 
 function convertTZ(date, tzString) {
-    return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
+    return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", { timeZone: tzString }));
 }
 @Entity()
 export class Role {
@@ -13,26 +13,26 @@ export class Role {
     @Column()
     name: string;
 
-    @CreateDateColumn({type: 'timestamp', default: () => 'LOCALTIMESTAMP'})
+    @CreateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
     createdAt: Date;
 
-    @UpdateDateColumn({type: 'timestamp', default: () => 'LOCALTIMESTAMP'})
+    @UpdateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
     updatedAt: Date;
 
     @BeforeInsert()
     insertCreated() {
         this.createdAt = new Date(
-            moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD HH:mm:ss")
+            moment().utc().format("YYYY-MM-DD HH:mm:ss")
         );
         this.updatedAt = new Date(
-            moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD HH:mm:ss")
+            moment().utc().format("YYYY-MM-DD HH:mm:ss")
         );
     }
 
     @BeforeUpdate()
     insertUpdated() {
         this.updatedAt = new Date(
-            moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD hh:mm:ss")
+            moment().utc().format("YYYY-MM-DD hh:mm:ss")
         )
     }
 }

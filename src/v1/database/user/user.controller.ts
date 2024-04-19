@@ -1,8 +1,8 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Patch, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { AddNewUserDto } from './dto/user.addNewUser.dto';
-import { userInfo } from 'os';
+import { UserUpdate } from './dto/user.update.dto';
 
 @Controller('v1/user')
 @ApiTags('user')
@@ -11,7 +11,7 @@ export class UserController {
         private readonly userService: UserService
     ) { }
 
-    @ApiOperation({summary: "Get all users from database."})
+    @ApiOperation({ summary: "Get all users from database." })
     @Get()
     async getAllUser() {
         try {
@@ -32,8 +32,8 @@ export class UserController {
         }
     }
 
-    @ApiOperation({summary: "Add new user with user Id."})
-    @Post()
+    @ApiOperation({ summary: "Add new user with user Id." })
+    @Post(":roleId")
     async addNewUser(@Param("roleId") roleId: number, @Body() userInfo: AddNewUserDto) {
         try {
             const userData = {
@@ -53,7 +53,27 @@ export class UserController {
             console.error("user.controller.ts addNewUser: ", err)
             return {
                 status: err.status,
-                error: 1, 
+                error: 1,
+                message: err.response.message || err.message
+            }
+        }
+    }
+
+    @ApiOperation({ summary: "Update user by Id." })
+    @Patch(":userId")
+    async updateUser(@Param("userId") userId: number, @Body() userUpdateInfo: UserUpdate) {
+        try {
+            const userData = {
+                ...userUpdateInfo,
+                id: userId
+            }
+            const result = await this.userService.updateUserById(userData)
+
+        } catch (err) {
+            console.error("user.controller.ts updateUser: ", err)
+            return {
+                status: err.status,
+                error: 1,
                 message: err.response.message
             }
         }
