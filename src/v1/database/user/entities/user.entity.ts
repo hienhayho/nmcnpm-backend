@@ -58,7 +58,7 @@ export class User {
   country: string
 
   @ManyToOne(() => Role, role => role.id,
-    { nullable: false }
+    { nullable: false, onDelete: "CASCADE" }
   )
   role: Role
 

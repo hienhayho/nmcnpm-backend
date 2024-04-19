@@ -55,6 +55,28 @@ export class RoleController {
     }
   }
 
+  @ApiOperation({ summary: "Get role by Id." })
+  @Get("get-role-by-id/:id")
+  async getRoleById(@Param("id") roleId: number) {
+    console.log(roleId)
+    try {
+      const result = await this.roleService.getRoleById(roleId);
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: `Get role with id=${roleId} successfully.`,
+        data: result
+      }
+    } catch (err) {
+      console.error("role.controller.ts getRoleById: ", err);
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? "Internal Server Error."
+      }
+    }
+  }
+
   @ApiOperation({ summary: "Update a role by Id." })
   @Patch()
   async updateRole(@Body() roleData: UpdateRole) {
@@ -79,7 +101,7 @@ export class RoleController {
   }
 
   @ApiOperation({ summary: "Delete a role by Id." })
-  @Delete(":id")
+  @Delete("delete-role-by-id/:id")
   async deleteRole(@Param("id") roleId: number) {
     try {
       const role = await this.roleService.deleteRole(roleId);

@@ -15,7 +15,7 @@ export class UserUpdate {
     @ApiProperty({
         type: String
     })
-    fullName: String
+    fullName: string
 
     @IsEmail()
     @ApiProperty({
