@@ -1,22 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, IsString } from "class-validator";
 
-export class RoomTypeAddNewDto {
+export class AddNewServiceDto {
     @IsString()
     @ApiProperty({
         type: String
     })
-    name: string;
+    name: string
 
     @IsNumber()
     @ApiProperty({
         type: Number
     })
-    capacity: number;
-
-    @IsNumber()
-    @ApiProperty({
-        type: Number
-    })
-    priceBase: number
+    price: number
 }
+

@@ -1,34 +1,73 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus } from '@nestjs/common';
 import { ServicesService } from './services.service';
-import { CreateServiceDto } from './dto/create-service.dto';
-import { UpdateServiceDto } from './dto/update-service.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AddNewServiceDto } from './dto/service.addNewService.dto';
 
-@Controller('services')
+@Controller('v1/services')
+@ApiTags("services")
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
-  @Post()
-  create(@Body() createServiceDto: CreateServiceDto) {
-    return this.servicesService.create(createServiceDto);
-  }
-
+  @ApiOperation({summary: "Get all services from database."})
   @Get()
-  findAll() {
-    return this.servicesService.findAll();
+  async getAllServices() {
+    try {
+      const result = await this.servicesService.getAllServires()
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Get all services successfully.",
+        data: result
+      }
+    } catch (err) {
+      console.error("room_type.controller.ts getAllRoomType: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.servicesService.findOne(+id);
+  @ApiOperation({summary: "Get service in a list of names."})
+  @Post("get-services-by-name")
+  async getServiceByNames(@Body() serviceNames: string[]) {
+    try {
+      const result = await this.servicesService.getServiceByNames(serviceNames)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Get all services successfully.",
+        data: result
+      }
+    } catch (err) {
+      console.error("room_type.controller.ts getAllRoomType: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    return this.servicesService.update(+id, updateServiceDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.servicesService.remove(+id);
+  @ApiOperation({summary: "Create a new service."})
+  @Post()
+  async addNewService(@Body() serviceData: AddNewServiceDto) {
+    try {
+      const result = await this.servicesService.addNewService(serviceData)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Get all services successfully.",
+        data: result
+      }
+    } catch (err) {
+      console.error("room_type.controller.ts getAllRoomType: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
   }
 }

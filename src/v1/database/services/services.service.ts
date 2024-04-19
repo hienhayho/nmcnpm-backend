@@ -1,26 +1,35 @@
-import { Injectable } from '@nestjs/common';
-import { CreateServiceDto } from './dto/create-service.dto';
-import { UpdateServiceDto } from './dto/update-service.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Service } from './entities/service.entity';
+import { In, Repository } from 'typeorm';
+import { AddNewServiceDto } from './dto/service.addNewService.dto';
 
 @Injectable()
 export class ServicesService {
-  create(createServiceDto: CreateServiceDto) {
-    return 'This action adds a new service';
+  constructor(
+    @InjectRepository(Service) private serviceServices: Repository<Service>
+  ){}
+
+  async getAllServires(){
+    const result = await this.serviceServices.find();
+    return result;
   }
 
-  findAll() {
-    return `This action returns all services`;
+  async getServiceByNames(serviceNames: string[]) {
+    const result = await this.serviceServices.find({
+      where: {name: In(serviceNames)}
+    })
+    return result;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} service`;
-  }
-
-  update(id: number, updateServiceDto: UpdateServiceDto) {
-    return `This action updates a #${id} service`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} service`;
+  async addNewService(serviceData: AddNewServiceDto) {
+    const serviceName = serviceData.name;
+    const service = await this.serviceServices.findOne({
+      where: {name: serviceName}
+    })
+    if (service) {
+      throw new BadRequestException({message: `Services with name=${serviceName} has already existed in database.`})
+    }
+    return await this.serviceServices.save(serviceData);
   }
 }

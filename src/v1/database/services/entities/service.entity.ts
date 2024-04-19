@@ -1,20 +1,20 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BeforeInsert, BeforeUpdate } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BeforeInsert, BeforeUpdate, OneToMany } from "typeorm";
 import * as moment from "moment-timezone"
-import { RoomType } from "../../room_type/entities/room_type.entity";
+import { RoomService } from "../../room-service/entities/room-service.entity";
 
 @Entity()
 export class Service {
     @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column()
+    @Column({unique: true, nullable: false})
     name: string;
 
-    @Column()
+    @Column({nullable: false})
     price: number;
 
-    @ManyToOne(() => RoomType, { onDelete: "CASCADE" })
-    roomType: RoomType
+    @OneToMany(() => RoomService, (roomService) => roomService.service)
+    roomService: RoomService[]
 
     @CreateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
     createdAt: Date;

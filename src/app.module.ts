@@ -6,6 +6,7 @@ import { RoleModule } from './v1/database/role/role.module';
 import { AppLoggerMiddleware } from './middleware/request.logging';
 import { AuthModule } from './v1/auth/auth.module';
 import { RoomTypeModule } from './v1/database/room_type/room_type.module';
+import { ServicesModule } from './v1/database/services/services.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { RoomTypeModule } from './v1/database/room_type/room_type.module';
     AuthModule,
     UserModule,
     RoleModule,
-    RoomTypeModule
+    RoomTypeModule,
+    ServicesModule
   ],
   // controllers: [AppController],
   // providers: [AppService],
