@@ -16,14 +16,14 @@ export class RoomType {
     @Column({ nullable: false })
     priceBase: number;
 
-    @OneToMany(() => RoomService, (roomService) => roomService.type)
-    roomService: RoomService[]
+    @OneToMany(() => RoomService, (roomService) => roomService.roomType)
+    roomService?: RoomService[]
 
     @CreateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
-    createdAt: Date;
+    createdAt?: Date;
 
     @UpdateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
-    updatedAt: Date;
+    updatedAt?: Date;
 
     @BeforeInsert()
     insertCreated() {

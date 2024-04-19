@@ -9,7 +9,7 @@ export class RoomService {
     id: number;
 
     @ManyToOne(() => RoomType, {nullable: false})
-    type: RoomType
+    roomType: RoomType
 
     @ManyToOne(() => Service, {nullable: false})
     service: Service
