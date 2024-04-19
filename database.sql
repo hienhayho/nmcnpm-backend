@@ -185,9 +185,9 @@ SET default_table_access_method = heap;
 CREATE TABLE public.bill (
     id integer NOT NULL,
     "priceAll" integer NOT NULL,
-    "userId" integer,
     "createdAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
-    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL
+    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
+    "userId" integer
 );
 
 
@@ -221,10 +221,10 @@ ALTER SEQUENCE public.bill_id_seq OWNED BY public.bill.id;
 
 CREATE TABLE public.manage (
     id integer NOT NULL,
-    "userId" integer NOT NULL,
-    "managerId" integer NOT NULL,
     "createdAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
-    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL
+    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
+    "userId" integer NOT NULL,
+    "managerId" integer NOT NULL
 );
 
 
@@ -272,9 +272,9 @@ ALTER TABLE public.role OWNER TO root;
 
 CREATE TABLE public.room (
     id integer NOT NULL,
-    "roomTypeId" integer,
     "createdAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
-    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL
+    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
+    "roomTypeId" integer
 );
 
 
@@ -290,11 +290,11 @@ CREATE TABLE public.room_detail (
     check_in timestamp without time zone NOT NULL,
     check_out timestamp without time zone NOT NULL,
     discount integer NOT NULL,
+    "createdAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
+    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
     "userId" integer,
     "roomId" integer,
-    "billId" integer,
-    "createdAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
-    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL
+    "billId" integer
 );
 
 
@@ -345,6 +345,43 @@ ALTER SEQUENCE public.room_id_seq OWNED BY public.room.id;
 
 
 --
+-- Name: room_service; Type: TABLE; Schema: public; Owner: root
+--
+
+CREATE TABLE public.room_service (
+    id integer NOT NULL,
+    "createdAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
+    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
+    "typeId" integer NOT NULL,
+    "serviceId" integer NOT NULL
+);
+
+
+ALTER TABLE public.room_service OWNER TO root;
+
+--
+-- Name: room_service_id_seq; Type: SEQUENCE; Schema: public; Owner: root
+--
+
+CREATE SEQUENCE public.room_service_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.room_service_id_seq OWNER TO root;
+
+--
+-- Name: room_service_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: root
+--
+
+ALTER SEQUENCE public.room_service_id_seq OWNED BY public.room_service.id;
+
+
+--
 -- Name: room_type; Type: TABLE; Schema: public; Owner: root
 --
 
@@ -390,7 +427,6 @@ CREATE TABLE public.service (
     id integer NOT NULL,
     name character varying NOT NULL,
     price integer NOT NULL,
-    "roomTypeId" integer,
     "createdAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
     "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL
 );
@@ -427,10 +463,10 @@ ALTER SEQUENCE public.service_id_seq OWNED BY public.service.id;
 CREATE TABLE public.services_used (
     "servicesUsed" integer NOT NULL,
     quantity integer NOT NULL,
-    "roomDetailId" integer,
-    "serviceId" integer,
     "createdAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
-    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL
+    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
+    "roomDetailId" integer,
+    "serviceId" integer
 );
 
 
@@ -465,9 +501,9 @@ CREATE TABLE public."user" (
     salary integer NOT NULL,
     city character varying NOT NULL,
     country character varying NOT NULL,
-    "roleId" integer NOT NULL,
     "createdAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
-    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL
+    "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
+    "roleId" integer NOT NULL
 );
 
 
@@ -524,6 +560,13 @@ ALTER TABLE ONLY public.room_detail ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: room_service id; Type: DEFAULT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.room_service ALTER COLUMN id SET DEFAULT nextval('public.room_service_id_seq'::regclass);
+
+
+--
 -- Name: room_type id; Type: DEFAULT; Schema: public; Owner: root
 --
 
@@ -548,7 +591,7 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 -- Data for Name: bill; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.bill (id, "priceAll", "userId", "createdAt", "updatedAt") FROM stdin;
+COPY public.bill (id, "priceAll", "createdAt", "updatedAt", "userId") FROM stdin;
 \.
 
 
@@ -556,7 +599,7 @@ COPY public.bill (id, "priceAll", "userId", "createdAt", "updatedAt") FROM stdin
 -- Data for Name: manage; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.manage (id, "userId", "managerId", "createdAt", "updatedAt") FROM stdin;
+COPY public.manage (id, "createdAt", "updatedAt", "userId", "managerId") FROM stdin;
 \.
 
 
@@ -576,7 +619,7 @@ COPY public.role (id, name, "createdAt", "updatedAt") FROM stdin;
 -- Data for Name: room; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.room (id, "roomTypeId", "createdAt", "updatedAt") FROM stdin;
+COPY public.room (id, "createdAt", "updatedAt", "roomTypeId") FROM stdin;
 \.
 
 
@@ -584,7 +627,15 @@ COPY public.room (id, "roomTypeId", "createdAt", "updatedAt") FROM stdin;
 -- Data for Name: room_detail; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.room_detail (id, number_users, check_in, check_out, discount, "userId", "roomId", "billId", "createdAt", "updatedAt") FROM stdin;
+COPY public.room_detail (id, number_users, check_in, check_out, discount, "createdAt", "updatedAt", "userId", "roomId", "billId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: room_service; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY public.room_service (id, "createdAt", "updatedAt", "typeId", "serviceId") FROM stdin;
 \.
 
 
@@ -600,7 +651,10 @@ COPY public.room_type (id, name, capacity, "priceBase", "createdAt", "updatedAt"
 -- Data for Name: service; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.service (id, name, price, "roomTypeId", "createdAt", "updatedAt") FROM stdin;
+COPY public.service (id, name, price, "createdAt", "updatedAt") FROM stdin;
+1	air condition	1212	2024-04-19 15:21:10.479625+00	2024-04-19 15:21:10.479625+00
+2	bath	12	2024-04-19 15:32:05.483356+00	2024-04-19 15:32:05.483356+00
+3	tivi	120	2024-04-19 15:32:13.715992+00	2024-04-19 15:32:13.715992+00
 \.
 
 
@@ -608,7 +662,7 @@ COPY public.service (id, name, price, "roomTypeId", "createdAt", "updatedAt") FR
 -- Data for Name: services_used; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.services_used ("servicesUsed", quantity, "roomDetailId", "serviceId", "createdAt", "updatedAt") FROM stdin;
+COPY public.services_used ("servicesUsed", quantity, "createdAt", "updatedAt", "roomDetailId", "serviceId") FROM stdin;
 \.
 
 
@@ -616,9 +670,9 @@ COPY public.services_used ("servicesUsed", quantity, "roomDetailId", "serviceId"
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public."user" (id, "userName", password, phone, gender, email, "fullName", salary, city, country, "roleId", "createdAt", "updatedAt") FROM stdin;
-7	admin	$2b$10$G3NtFnWRtb7qFAs/VKgknebuh9O5qqen1SuTQuGitd35F2OSUWbGK	122131313	2	admin@gmail.com	admin	1212	HCM	VN	1	2024-04-19 12:21:57.034137+00	2024-04-19 12:21:57.034137+00
-8	hien	$2b$10$./kt4X4sydxVkezxoE.oceS6v3lZUdNgs6wHv.rQ2jvxq4lgX81dC	1221313113	1	hien@gmail.com	hien	3000	Ha Noi	VN	4	2024-04-19 12:22:26.774889+00	2024-04-19 12:22:26.774889+00
+COPY public."user" (id, "userName", password, phone, gender, email, "fullName", salary, city, country, "createdAt", "updatedAt", "roleId") FROM stdin;
+7	admin	$2b$10$G3NtFnWRtb7qFAs/VKgknebuh9O5qqen1SuTQuGitd35F2OSUWbGK	122131313	2	admin@gmail.com	admin	1212	HCM	VN	2024-04-19 12:21:57.034137+00	2024-04-19 12:21:57.034137+00	1
+8	hien	$2b$10$./kt4X4sydxVkezxoE.oceS6v3lZUdNgs6wHv.rQ2jvxq4lgX81dC	1221313113	1	hien@gmail.com	hien	3000	Ha Noi	VN	2024-04-19 12:22:26.774889+00	2024-04-19 12:22:26.774889+00	4
 \.
 
 
@@ -651,6 +705,13 @@ SELECT pg_catalog.setval('public.room_id_seq', 1, false);
 
 
 --
+-- Name: room_service_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
+--
+
+SELECT pg_catalog.setval('public.room_service_id_seq', 1, false);
+
+
+--
 -- Name: room_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
@@ -661,7 +722,7 @@ SELECT pg_catalog.setval('public.room_type_id_seq', 1, false);
 -- Name: service_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
-SELECT pg_catalog.setval('public.service_id_seq', 1, false);
+SELECT pg_catalog.setval('public.service_id_seq', 3, true);
 
 
 --
@@ -676,6 +737,14 @@ SELECT pg_catalog.setval('public."services_used_servicesUsed_seq"', 1, false);
 --
 
 SELECT pg_catalog.setval('public.user_id_seq', 8, true);
+
+
+--
+-- Name: room_service PK_319e7879b899c0055af6e3b00f3; Type: CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.room_service
+    ADD CONSTRAINT "PK_319e7879b899c0055af6e3b00f3" PRIMARY KEY (id);
 
 
 --
@@ -767,6 +836,14 @@ ALTER TABLE ONLY public.room_type
 
 
 --
+-- Name: service UQ_7806a14d42c3244064b4a1706ca; Type: CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.service
+    ADD CONSTRAINT "UQ_7806a14d42c3244064b4a1706ca" UNIQUE (name);
+
+
+--
 -- Name: user UQ_da5934070b5f2726ebfd3122c80; Type: CONSTRAINT; Schema: public; Owner: root
 --
 
@@ -780,6 +857,14 @@ ALTER TABLE ONLY public."user"
 
 ALTER TABLE ONLY public."user"
     ADD CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE (email);
+
+
+--
+-- Name: room_service FK_06dcda94406c6d27b9f09358665; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.room_service
+    ADD CONSTRAINT "FK_06dcda94406c6d27b9f09358665" FOREIGN KEY ("typeId") REFERENCES public.room_type(id);
 
 
 --
@@ -847,14 +932,6 @@ ALTER TABLE ONLY public.room
 
 
 --
--- Name: service FK_ba673be3c2114326632429ba34e; Type: FK CONSTRAINT; Schema: public; Owner: root
---
-
-ALTER TABLE ONLY public.service
-    ADD CONSTRAINT "FK_ba673be3c2114326632429ba34e" FOREIGN KEY ("roomTypeId") REFERENCES public.room_type(id) ON DELETE CASCADE;
-
-
---
 -- Name: user FK_c28e52f758e7bbc53828db92194; Type: FK CONSTRAINT; Schema: public; Owner: root
 --
 
@@ -868,6 +945,14 @@ ALTER TABLE ONLY public."user"
 
 ALTER TABLE ONLY public.services_used
     ADD CONSTRAINT "FK_c3ec0d2a5a977b33fd4f101f033" FOREIGN KEY ("serviceId") REFERENCES public.service(id);
+
+
+--
+-- Name: room_service FK_fc46b7b44ee6df2966179936791; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.room_service
+    ADD CONSTRAINT "FK_fc46b7b44ee6df2966179936791" FOREIGN KEY ("serviceId") REFERENCES public.service(id);
 
 
 --
