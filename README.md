@@ -17,7 +17,7 @@ Source: [src](src/v1/auth)
 | Routes  | Method | Description | Key | More | 
 | :--: | :--: | :-- | :-- | :--: |
 | `v1/auth/login`  | POST | User login | `userName`: string, `password`: string | Body |
-| `v1/auth/register`  | POST | User registration | `userName`: string, `password`: string, `email`: string, `fullName`: string, `phone`: string, `gender`: number, `salary`: number, `field`: number, `city`: string, `country`: string, `roleId`: number | Body |
+| `v1/auth/register`  | POST | User registration | `userName`: string, `password`: string, `email`: string, `fullName`: string, `phone`: string, `gender`: number, `salary`: number, `field`: number, `city`: string, `country`: string | Body |
 
 </details>
 

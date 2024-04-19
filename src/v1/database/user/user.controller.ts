@@ -1,4 +1,5 @@
-import { Body, Controller, Get, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Req } from '@nestjs/common';
+import { Request } from "express";
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { AddNewUserDto } from './dto/user.addNewUser.dto';
@@ -28,6 +29,27 @@ export class UserController {
                 status: err.status,
                 error: 1,
                 message: err.response.message
+            }
+        }
+    }
+
+    @ApiOperation({ summary: "Get user by condition." })
+    @Get("condition")
+    async getUserByCondition(@Query("condition") condition:string, @Query("value") value:string) {
+        try {
+            const allUser = await this.userService.getUserByCondition(condition,value);
+            return {
+                status: HttpStatus.OK,
+                error: 0,
+                message: "Get users by condition successfully !",
+                data: allUser
+            }
+        } catch (err) {
+            console.error("user.controller.ts getUserByCondition: ", err.message);
+            return {
+                status: err.status ,
+                error: 1,
+                message: err.response.message 
             }
         }
     }
@@ -71,6 +93,28 @@ export class UserController {
 
         } catch (err) {
             console.error("user.controller.ts updateUser: ", err)
+            return {
+                status: err.status,
+                error: 1,
+                message: err.response.message
+            }
+        }
+    }
+
+    @ApiOperation({summary: "Delete user by condition"})
+    @Delete('')
+    async deleteUser(@Query("condition") condition:string, @Query("value") value:string ,@Req() request: Request,){
+        const cookies = request.cookies
+        try{
+            const result = await this.userService.deleteUser(cookies,condition, value)
+            return {
+                status: HttpStatus.OK,
+                error: 0,
+                message: "Delete user successfully",
+                data: result
+            }
+        }catch (err){
+            console.error("user.controller.ts deleteUser: ", err)
             return {
                 status: err.status,
                 error: 1,
