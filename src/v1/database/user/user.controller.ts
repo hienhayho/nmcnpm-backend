@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { Request } from "express";
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { AddNewUserDto } from './dto/user.addNewUser.dto';
 import { UserUpdate } from './dto/user.update.dto';
+import { AuthGuard } from '@/middleware/authenticate';
 
 @Controller('v1/user')
 @ApiTags('user')
+@UseGuards(new AuthGuard())
 export class UserController {
     constructor(
         private readonly userService: UserService

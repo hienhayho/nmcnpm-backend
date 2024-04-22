@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ServicesUsedService } from './services_used.service';
 import { CreateServicesUsedDto } from './dto/create-services_used.dto';
 import { UpdateServicesUsedDto } from './dto/update-services_used.dto';
+import { AuthGuard } from '@/middleware/authenticate';
 
 @Controller('services-used')
+@UseGuards(new AuthGuard())
 export class ServicesUsedController {
   constructor(private readonly servicesUsedService: ServicesUsedService) {}
 

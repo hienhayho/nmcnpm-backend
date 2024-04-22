@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ManageService } from './manage.service';
 import { CreateManageDto } from './dto/create-manage.dto';
 import { UpdateManageDto } from './dto/update-manage.dto';
+import { AuthGuard } from '@/middleware/authenticate';
 
 @Controller('manage')
+@UseGuards(new AuthGuard())
 export class ManageController {
   constructor(private readonly manageService: ManageService) {}
 
