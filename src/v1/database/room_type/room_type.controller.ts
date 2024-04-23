@@ -1,34 +1,53 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, HttpStatus, Body, Query, Param, Patch, UseGuards } from '@nestjs/common';
 import { RoomTypeService } from './room_type.service';
-import { CreateRoomTypeDto } from './dto/create-room_type.dto';
-import { UpdateRoomTypeDto } from './dto/update-room_type.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AddNewRoomTypeDto } from './dto/roomType.addNewRoomType.dto';
+import { AuthGuard } from '@/middleware/authenticate';
 
-@Controller('room-type')
+@Controller('v1/room-type')
+@ApiTags("room_type")
+@UseGuards(new AuthGuard())
 export class RoomTypeController {
-  constructor(private readonly roomTypeService: RoomTypeService) {}
-
-  @Post()
-  create(@Body() createRoomTypeDto: CreateRoomTypeDto) {
-    return this.roomTypeService.create(createRoomTypeDto);
-  }
-
+  constructor(private readonly roomTypeService: RoomTypeService) { }
+  @ApiOperation({summary: "Get all room type."})
   @Get()
-  findAll() {
-    return this.roomTypeService.findAll();
+  async getAllRoomType() {
+    try {
+      const result = await this.roomTypeService.getAllRoomType()
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Get all room type successfully.",
+        data: result
+      }
+    } catch (err) {
+      console.error("room_type.controller.ts getAllRoomType: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roomTypeService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoomTypeDto: UpdateRoomTypeDto) {
-    return this.roomTypeService.update(+id, updateRoomTypeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.roomTypeService.remove(+id);
-  }
+  
+  @ApiOperation({summary: "Add new room type."})
+  @Post()
+  async createRoomType(@Body() roomTypeInput: AddNewRoomTypeDto) {
+    try {
+      const result = await this.roomTypeService.createRoomType(roomTypeInput)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "create room type successfully.",
+        data: result
+      }
+    } catch (err) {
+      console.error("room_type.controller.ts createRoomType: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
+  } 
 }

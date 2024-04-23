@@ -4,11 +4,13 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '@/v1/database/user/entities/user.entity';
 import { UserLogin } from '@/v1/auth/dto/user.login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class LoginService {
     constructor(
         @InjectRepository(User) private readonly userService: Repository<User>,
+        private jwtService: JwtService
     ) { }
 
     async login(userInfo: UserLogin) {
@@ -23,10 +25,11 @@ export class LoginService {
         if (!isMatch) {
             throw new Error("invalid authentication credentials")
         }
-
+        
         const userId = String(user[0].id)
-        const saltOrRounds = parseInt(process.env.SALT)
-        const access_token = await bcrypt.hash(userId, saltOrRounds)
-        return access_token
+        const payload = { id: userId };
+        return {
+          access_token: await this.jwtService.signAsync(payload),
+        };
     }
 }

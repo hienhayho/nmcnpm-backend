@@ -1,7 +1,8 @@
-import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, MoreThan, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 import { User } from './entities/user.entity';
 import { Role } from '../role/entities/role.entity';
 import { UserBackendDto } from './dto/user.backend.dto';
@@ -12,7 +13,8 @@ import { UserUpdate } from './dto/user.update.dto';
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userService: Repository<User>,
-    @InjectRepository(Role) private readonly roleService: Repository<Role>
+    @InjectRepository(Role) private readonly roleService: Repository<Role>,
+    private jwtService: JwtService
   ) { }
 
   async getAllUser() {
@@ -27,6 +29,21 @@ export class UserService {
       console.error("user.sevice.ts getAllUser: ", err.message)
       throw new InternalServerErrorException({ message: "Something went wrong! Please try again later." })
     }
+  }
+
+  async getUserByCondition(condition: string, value: string) {
+    if (!["userName", "email", "id"].includes(condition)) {
+      throw new BadRequestException({ message: "condition should be userName, email or id" })
+    }
+    const users = await this.userService.find({
+      where: {
+        userName: condition == "userName" ? value : Like("%"),
+        email: condition == "email" ? value : Like("%"),
+        id: condition == "id" ? parseInt(value) : MoreThan(0)
+      },
+      relations: ["role"]
+    })
+    return users
   }
 
   async addNewUser(userData: UserBackendDto) {
@@ -45,13 +62,13 @@ export class UserService {
     const userName = userData.userName;
     const user = await this.userService.findOne({ where: { userName: userName } })
     if (user) {
-      throw new BadRequestException({ message: `userName = ${userName} has already exist in database.` })
+      throw new BadRequestException({ message: `userName=${userName} has already exist in database.` })
     }
 
     const email = userData.email;
     const emails = await this.userService.findOne({ where: { email: email } })
     if (emails) {
-      throw new BadRequestException({ message: `email = ${email} has already exist in database.` })
+      throw new BadRequestException({ message: `email=${email} has already exist in database.` })
     }
 
     const salt = parseInt(process.env.SALT)
@@ -66,9 +83,110 @@ export class UserService {
     return await this.userService.save(userBackendSave)
   }
 
-  async updateUserById(userData: UserUpdate) {
+  async updateUserById(userData: UserUpdate, cookies: Record<string, any>) {
+    const token = cookies["access_token"]
+    if (!token) {
+      throw new UnauthorizedException({ message: "token not found !" })
+    }
+    const JWT_KEY = process.env.JWT_KEY;
+    let payload;
+    try {
+      payload = await this.jwtService.verifyAsync(
+        token.access_token,
+        {
+          secret: JWT_KEY
+        }
+      );
+    } catch (err) {
+      throw new UnauthorizedException({ message: "token expired" });
+    }
+    const id = payload["id"]
+    const user = await this.userService.findOne({
+      where: {
+        id: id
+      },
+      relations: ["role"]
+    })
+    if (!user) {
+      throw new NotFoundException({ message: "User not found in database." })
+    }
+    userData.id = user.id
+    return await this.userService.update({ id: id }, userData)
+  }
 
+  async deleteUser(cookies: Record<string, any>, condition: string, value: string) {
+    if (!["userName", "email", "id"].includes(condition)) {
+      throw new BadRequestException({ message: "condition should be userName, email or id" })
+    }
+
+    // get access_token from cookies
+    const token = cookies["access_token"]
+    if (!token) {
+      throw new UnauthorizedException({ message: "token not found" });
+    }
+    const JWT_KEY = process.env.JWT_KEY
+    let payload;
+    try {
+      payload = await this.jwtService.verifyAsync(
+        token.access_token,
+        {
+          secret: JWT_KEY
+        }
+      );
+    } catch (err) {
+      throw new UnauthorizedException({ message: "token expired" });
+    }
+    const adminId = payload["id"]
+    const admin = await this.userService.findOne(
+      {
+        where: { id: adminId },
+        relations: ["role"]
+      }
+    )
+    if (admin.role.id >= 3) {
+      throw new BadRequestException({ message: "not allowed to delete user" });
+    }
+
+    if (condition == "userName") {
+      const user = await this.userService.findOne({
+        where: { userName: value },
+        relations: ["role"]
+      })
+      if (!user) {
+        throw new BadRequestException({ message: "user not found" });
+      }
+      if (user.role.id < 4) {
+        throw new BadRequestException({ message: "not allowed to delete user" });
+      }
+      return await this.userService.remove(user)
+    }
+
+    if (condition == "email") {
+      const user = await this.userService.findOne({
+        where: { email: value },
+        relations: ["role"]
+      })
+      if (!user) {
+        throw new BadRequestException({ message: "user not found" });
+      }
+      if (user.role.id < 4) {
+        throw new BadRequestException({ message: "not allowed to delete user" });
+      }
+      return await this.userService.remove(user)
+    }
+
+    if (condition == "id") {
+      const user = await this.userService.findOne({
+        where: { id: parseInt(value) },
+        relations: ["role"]
+      })
+      if (!user) {
+        throw new BadRequestException({ message: "user not found" });
+      }
+      if (user.role.id < 4) {
+        throw new BadRequestException({ message: "not allowed to delete user" });
+      }
+      return await this.userService.remove(user)
+    }
   }
 }
-
-

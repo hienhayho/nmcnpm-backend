@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { RoomDetailService } from './room_detail.service';
 import { CreateRoomDetailDto } from './dto/create-room_detail.dto';
 import { UpdateRoomDetailDto } from './dto/update-room_detail.dto';
+import { AuthGuard } from '@/middleware/authenticate';
 
 @Controller('room-detail')
+@UseGuards(new AuthGuard())
 export class RoomDetailController {
   constructor(private readonly roomDetailService: RoomDetailService) {}
 
