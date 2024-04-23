@@ -13,10 +13,6 @@ async function bootstrap() {
     .setTitle('NMCNPM BACKEND')
     .setDescription('Hotels Mangagement API')
     .setVersion('1.0')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'access-token',
-    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
