@@ -352,7 +352,7 @@ CREATE TABLE public.room_service (
     id integer NOT NULL,
     "createdAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
     "updatedAt" timestamp with time zone DEFAULT ('now'::text)::timestamp(6) with time zone NOT NULL,
-    "typeId" integer NOT NULL,
+    "roomTypeId" integer NOT NULL,
     "serviceId" integer NOT NULL
 );
 
@@ -635,7 +635,12 @@ COPY public.room_detail (id, number_users, check_in, check_out, discount, "creat
 -- Data for Name: room_service; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.room_service (id, "createdAt", "updatedAt", "typeId", "serviceId") FROM stdin;
+COPY public.room_service (id, "createdAt", "updatedAt", "roomTypeId", "serviceId") FROM stdin;
+1	2024-04-19 18:37:59+00	2024-04-19 18:37:59+00	1	2
+2	2024-04-19 18:37:59+00	2024-04-19 18:37:59+00	1	3
+3	2024-04-19 19:06:17+00	2024-04-19 19:06:17+00	2	2
+4	2024-04-19 19:06:17+00	2024-04-19 19:06:17+00	2	3
+5	2024-04-19 19:06:17+00	2024-04-19 19:06:17+00	2	4
 \.
 
 
@@ -644,6 +649,8 @@ COPY public.room_service (id, "createdAt", "updatedAt", "typeId", "serviceId") F
 --
 
 COPY public.room_type (id, name, capacity, "priceBase", "createdAt", "updatedAt") FROM stdin;
+1	vip	3	12	2024-04-19 18:37:59+00	2024-04-19 18:37:59+00
+2	vip pro	4	1212	2024-04-19 19:06:17+00	2024-04-19 19:06:17+00
 \.
 
 
@@ -655,6 +662,7 @@ COPY public.service (id, name, price, "createdAt", "updatedAt") FROM stdin;
 1	air condition	1212	2024-04-19 15:21:10.479625+00	2024-04-19 15:21:10.479625+00
 2	bath	12	2024-04-19 15:32:05.483356+00	2024-04-19 15:32:05.483356+00
 3	tivi	120	2024-04-19 15:32:13.715992+00	2024-04-19 15:32:13.715992+00
+4	bed	0	2024-04-20 02:05:41.621511+00	2024-04-20 02:05:41.621511+00
 \.
 
 
@@ -708,21 +716,21 @@ SELECT pg_catalog.setval('public.room_id_seq', 1, false);
 -- Name: room_service_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
-SELECT pg_catalog.setval('public.room_service_id_seq', 1, false);
+SELECT pg_catalog.setval('public.room_service_id_seq', 5, true);
 
 
 --
 -- Name: room_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
-SELECT pg_catalog.setval('public.room_type_id_seq', 1, false);
+SELECT pg_catalog.setval('public.room_type_id_seq', 3, true);
 
 
 --
 -- Name: service_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
-SELECT pg_catalog.setval('public.service_id_seq', 3, true);
+SELECT pg_catalog.setval('public.service_id_seq', 4, true);
 
 
 --
@@ -860,14 +868,6 @@ ALTER TABLE ONLY public."user"
 
 
 --
--- Name: room_service FK_06dcda94406c6d27b9f09358665; Type: FK CONSTRAINT; Schema: public; Owner: root
---
-
-ALTER TABLE ONLY public.room_service
-    ADD CONSTRAINT "FK_06dcda94406c6d27b9f09358665" FOREIGN KEY ("typeId") REFERENCES public.room_type(id);
-
-
---
 -- Name: room_detail FK_24370c10b958f6eaa764da6b4ab; Type: FK CONSTRAINT; Schema: public; Owner: root
 --
 
@@ -929,6 +929,14 @@ ALTER TABLE ONLY public.manage
 
 ALTER TABLE ONLY public.room
     ADD CONSTRAINT "FK_9e55182c47f8ba7a32466131837" FOREIGN KEY ("roomTypeId") REFERENCES public.room_type(id);
+
+
+--
+-- Name: room_service FK_afdee3523742f897dea3e5564a5; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.room_service
+    ADD CONSTRAINT "FK_afdee3523742f897dea3e5564a5" FOREIGN KEY ("roomTypeId") REFERENCES public.room_type(id);
 
 
 --
