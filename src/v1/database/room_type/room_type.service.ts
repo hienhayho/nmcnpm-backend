@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoomType } from './entities/room_type.entity';
 import { Repository } from 'typeorm';
 import { AddNewRoomTypeDto } from './dto/roomType.addNewRoomType.dto';
-import {ServicesService} from "../services/services.service"
+import { ServicesService } from "../services/services.service"
 import { RoomService } from '../room-service/entities/room-service.entity';
 
 @Injectable()
@@ -13,12 +13,41 @@ export class RoomTypeService {
     @InjectRepository(RoomService) private roomServiceService: Repository<RoomService>,
     private serviceService: ServicesService,
   ) { }
-  async getAllRoomType(){
+  async getAllRoomType() {
     const result = await this.roomTypeService.find({});
     return result;
   }
 
-  async createRoomType(roomTypeInput: AddNewRoomTypeDto){
+  async getRoomTypeWithItsServices(id: number) {
+    const roomType = await this.roomTypeService.find({
+      select: {
+        id: true,
+        name: true,
+        capacity: true,
+        priceBase: true,
+        roomService: {
+          id: true,
+          service: {
+            id: true,
+            name: true
+          }
+        }
+      },
+      relations: {
+        roomService: {
+          service: true
+        }
+      },
+      where: { id: id },
+    })
+    console.log(roomType)
+    if (roomType.length == 0) {
+      throw new BadRequestException({ message: `Room type with id=${id} was not exist in database.` });
+    }
+    return roomType
+  }
+
+  async createRoomType(roomTypeInput: AddNewRoomTypeDto) {
     const services = await this.serviceService.getServiceByNames(roomTypeInput.service_names)
     const roomType = new RoomType()
     roomType.name = roomTypeInput.name
@@ -27,8 +56,8 @@ export class RoomTypeService {
 
     const roomTypeSaved = await this.roomTypeService.save(roomType)
 
-    const roomServices : RoomService[] = []
-    for (let i = 0;i<services.length;i++){
+    const roomServices: RoomService[] = []
+    for (let i = 0; i < services.length; i++) {
       const roomService = new RoomService()
       roomService.service = services[i]
       roomService.roomType = roomTypeSaved
@@ -36,7 +65,7 @@ export class RoomTypeService {
     }
 
     await this.roomServiceService.insert(roomServices);
-  
+
     return roomTypeSaved
   }
 }

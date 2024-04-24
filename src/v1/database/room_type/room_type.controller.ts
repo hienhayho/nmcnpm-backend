@@ -9,7 +9,7 @@ import { AuthGuard } from '@/middleware/authenticate';
 @UseGuards(new AuthGuard())
 export class RoomTypeController {
   constructor(private readonly roomTypeService: RoomTypeService) { }
-  @ApiOperation({summary: "Get all room type."})
+  @ApiOperation({ summary: "Get all room type." })
   @Get()
   async getAllRoomType() {
     try {
@@ -29,8 +29,30 @@ export class RoomTypeController {
       }
     }
   }
-  
-  @ApiOperation({summary: "Add new room type."})
+
+  @ApiOperation({ summary: "Get room type with its services." })
+  @Post("get-room-type/:id")
+  async getRoomTypeWithItsServices(@Param("id") id: string) {
+    const roomTypeId = parseInt(id)
+    try {
+      const result = await this.roomTypeService.getRoomTypeWithItsServices(roomTypeId)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Get all room type successfully.",
+        data: result
+      }
+    } catch (err) {
+      console.error("room_type.controller.ts getAllRoomType: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
+  }
+
+  @ApiOperation({ summary: "Add new room type." })
   @Post()
   async createRoomType(@Body() roomTypeInput: AddNewRoomTypeDto) {
     try {
@@ -49,5 +71,5 @@ export class RoomTypeController {
         message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
-  } 
+  }
 }

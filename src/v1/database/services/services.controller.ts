@@ -8,9 +8,9 @@ import { AuthGuard } from '@/middleware/authenticate';
 @ApiTags("services")
 @UseGuards(new AuthGuard())
 export class ServicesController {
-  constructor(private readonly servicesService: ServicesService) {}
+  constructor(private readonly servicesService: ServicesService) { }
 
-  @ApiOperation({summary: "Get all services from database."})
+  @ApiOperation({ summary: "Get all services from database." })
   @Get()
   async getAllServices() {
     try {
@@ -31,7 +31,7 @@ export class ServicesController {
     }
   }
 
-  @ApiOperation({summary: "Get service in a list of names."})
+  @ApiOperation({ summary: "Get service in a list of names." })
   @Post("get-services-by-name")
   async getServiceByNames(@Body() serviceNames: string[]) {
     try {
@@ -52,7 +52,7 @@ export class ServicesController {
     }
   }
 
-  @ApiOperation({summary: "Create a new service."})
+  @ApiOperation({ summary: "Create a new service." })
   @Post()
   async addNewService(@Body() serviceData: AddNewServiceDto) {
     try {
@@ -60,7 +60,7 @@ export class ServicesController {
       return {
         status: HttpStatus.OK,
         error: 0,
-        message: "Get all services successfully.",
+        message: "Create new service successfully.",
         data: result
       }
     } catch (err) {
