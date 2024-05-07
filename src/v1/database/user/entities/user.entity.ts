@@ -43,22 +43,22 @@ export class User {
   fullName: string;
 
   @Column({
-    nullable: false
+    nullable: true
   })
   salary: number;
 
   @Column({
-    nullable: false
+    nullable: true
   })
   city: string
 
   @Column({
-    nullable: false
+    nullable: true
   })
   country: string
 
   @Column({
-    nullable:true
+    nullable: true
   })
   avatar: string
 

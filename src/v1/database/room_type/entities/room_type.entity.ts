@@ -13,6 +13,9 @@ export class RoomType {
     @Column({ nullable: false })
     capacity: number;
 
+    @Column({ nullable: true })
+    desc: string;
+
     @Column({ nullable: false })
     priceBase: number;
 

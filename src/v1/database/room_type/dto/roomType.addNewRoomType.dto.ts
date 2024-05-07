@@ -14,6 +14,12 @@ export class AddNewRoomTypeDto {
     })
     capacity: number
 
+    @IsString()
+    @ApiProperty({
+        type: String
+    })
+    desc: string
+
     @IsNumber()
     @ApiProperty({
         type: Number
@@ -21,7 +27,7 @@ export class AddNewRoomTypeDto {
     priceBase: number
 
     @IsArray()
-    @IsString({each: true})
+    @IsString({ each: true })
     @ArrayMinSize(1)
     @ApiProperty({
         type: Array<String>

@@ -40,22 +40,4 @@ export class UserRegister {
         type: Number
     })
     gender: number;
-
-    @IsNumber()
-    @ApiProperty({
-        type: Number
-    })
-    salary: number;
-
-    @IsString()
-    @ApiProperty({
-        type: String
-    })
-    city: string;
-
-    @IsString()
-    @ApiProperty({
-        type: String
-    })
-    country: string;
 }
