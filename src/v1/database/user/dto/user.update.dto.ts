@@ -54,4 +54,5 @@ export class UserUpdate {
         type: String
     })
     country: string;
+
 }

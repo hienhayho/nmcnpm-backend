@@ -4,8 +4,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { join } from 'path';
+import * as fs from 'fs'
 
 async function bootstrap() {
+  var dir = join(process.cwd(), process.env.IMG_DEST)
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir)
+  }
+
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   app.use(cookieParser());

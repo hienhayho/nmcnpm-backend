@@ -1,10 +1,17 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Req, Res, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Request } from "express";
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { AddNewUserDto } from './dto/user.addNewUser.dto';
 import { UserUpdate } from './dto/user.update.dto';
 import { AuthGuard } from '@/middleware/authenticate';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { join } from 'path';
+import { UpdateImageDto } from './dto/user.update.image.dto';
+import {Response} from 'express'
+import { createReadStream } from 'fs';
+import { getImagesById, getImagesFolder } from '@/utils';
 
 @Controller('v1/user')
 @ApiTags('user')
@@ -126,4 +133,26 @@ export class UserController {
             }
         }
     }
+
+    @Post('upload')
+    @ApiConsumes('multipart/form-data')
+    @UseInterceptors(FileInterceptor('file',{
+        storage: diskStorage({
+            destination: getImagesFolder
+        })
+    }))
+    uploadFile(@Body() data: UpdateImageDto, @UploadedFile() file: Express.Multer.File) {
+        return file
+    }
+
+    @Get('/:id')
+        getUserProfilePhoto(
+            @Res({ passthrough: true }) res: Response
+        ): StreamableFile {
+            res.set({'Content-Type': 'image/jpg'});
+
+            const imageLocation = getImagesById("2b937a67eaac1484b5e036d3e08012f1")
+            const file = createReadStream(imageLocation);
+            return new StreamableFile(file);
+        }
 }
