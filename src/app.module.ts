@@ -30,9 +30,7 @@ import { ServicesModule } from './v1/database/services/services.module';
     RoleModule,
     RoomTypeModule,
     ServicesModule
-  ],
-  // controllers: [AppController],
-  // providers: [AppService],
+  ]
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer): void {
