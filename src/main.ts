@@ -8,7 +8,7 @@ import { join } from 'path';
 import * as fs from 'fs'
 
 async function bootstrap() {
-  var dir = join(process.cwd(), process.env.IMG_DEST)
+  var dir = join(process.cwd(), "images")
   if (!fs.existsSync(dir)){
     fs.mkdirSync(dir)
   }

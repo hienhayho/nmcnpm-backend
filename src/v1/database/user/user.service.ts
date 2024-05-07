@@ -189,4 +189,86 @@ export class UserService {
       return await this.userService.remove(user)
     }
   }
+
+  async uploadUserAvatar(fileId: string, cookies: Record<string, any>) {
+    try {
+      // get access_token from cookies
+      const token = cookies["access_token"]
+      if (!token) {
+        throw new UnauthorizedException({ message: "token not found" });
+      }
+      const JWT_KEY = process.env.JWT_KEY
+      let payload;
+      try {
+        payload = await this.jwtService.verifyAsync(
+          token.access_token,
+          {
+            secret: JWT_KEY
+          }
+        );
+      } catch (err) {
+        throw new UnauthorizedException({ message: "token expired" });
+      }
+      const userId = payload["id"]
+      const user = await this.userService.findOne(
+        {
+          where: { id: userId },
+        }
+      )
+      if (!user) {
+        throw new NotFoundException({ message: "User not found in database." })
+      }
+      user.avatar = fileId
+      return await this.userService.update({ id: userId }, user)
+
+
+    } catch (err) {
+      console.error("user.sevice.ts uploadUserAvatar: ", err.message)
+      throw new InternalServerErrorException({ message: "Something went wrong! Please try again later." })
+    }
+  }
+
+  async getUserAvatarById(cookies: Record<string, any>){
+    try {
+      // get access_token from cookies
+      const token = cookies["access_token"]
+      if (!token) {
+        throw new UnauthorizedException({ message: "token not found" });
+      }
+      const JWT_KEY = process.env.JWT_KEY
+      let payload;
+      try {
+        payload = await this.jwtService.verifyAsync(
+          token.access_token,
+          {
+            secret: JWT_KEY
+          }
+        );
+      } catch (err) {
+        throw new UnauthorizedException({ message: "token expired" });
+      }
+      const userId = payload["id"]
+      const user = await this.userService.findOne(
+        {
+          where: { id: userId },
+        }
+      )
+      if (!user) {
+        throw new NotFoundException({ message: "User not found in database." })
+      }
+
+      if (user.avatar == null) {
+        if (user.gender == 1){
+          return "male.png"
+        } else {
+          return "female.png"
+        }
+      }
+
+      return user.avatar
+    } catch (err) {
+      console.error("user.sevice.ts getUserAvatarById: ", err.message)
+      throw new InternalServerErrorException({ message: "Something went wrong! Please try again later." })
+    }
+  }
 }

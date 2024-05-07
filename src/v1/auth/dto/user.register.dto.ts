@@ -9,7 +9,6 @@ export class UserRegister {
     userName: string;
 
     @IsString()
-    @Min(8)
     @ApiProperty({
         type: String,
         minLength: 8,

@@ -79,26 +79,4 @@ export class ServicesController {
     }
   }
 
-  // @Post('upload')
-  // @ApiConsumes('multipart/form-data')
-  // @UseInterceptors(FileInterceptor('file',{
-  //   storage: diskStorage({
-  //     destination: join(process.cwd(), process.env.IMG_DEST)
-  //   })
-  // }))
-  // uploadFile(@Body() data:UploadDto,@UploadedFile() file: Express.Multer.File) {
-  //   return file
-  // }
-
-  // @Get('/:id')
-  //   getUserProfilePhoto(
-  //       @Res({ passthrough: true }) res: Response
-  //   ): StreamableFile {
-
-  //       res.set({'Content-Type': 'image/jpg'});
-
-  //       const imageLocation = join(process.cwd(), process.env.IMG_DEST, '2b937a67eaac1484b5e036d3e08012f1');
-  //       const file = createReadStream(imageLocation);
-  //       return new StreamableFile(file);
-  //   }
 }

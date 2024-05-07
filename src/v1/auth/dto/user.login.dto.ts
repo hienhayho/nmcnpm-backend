@@ -10,7 +10,6 @@ export class UserLogin {
     userName: string;
 
     @IsString()
-    @Min(8)
     @ApiProperty({
         type: String
     })

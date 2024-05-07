@@ -134,25 +134,47 @@ export class UserController {
         }
     }
 
-    @Post('upload')
+    @ApiOperation({ summary: "Upload avatar for user" })
+    @Post('user-avatar/upload')
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('file',{
         storage: diskStorage({
-            destination: getImagesFolder
+            destination: getImagesFolder()
         })
     }))
-    uploadFile(@Body() data: UpdateImageDto, @UploadedFile() file: Express.Multer.File) {
-        return file
+    async uploadUserAvatar(@Body() data: UpdateImageDto, @UploadedFile() file: Express.Multer.File,@Req() request: Request) {
+        const cookies = request.cookies;
+        try {
+            const result = await this.userService.uploadUserAvatar(file.filename,cookies)
+            return {
+                status: HttpStatus.OK,
+                error: 0,
+                message: "Upload user successfully",
+            }
+        } catch (err) {
+            console.error("user.controller.ts uploadUserAvatar: ", err)
+            return {
+                status: err.status,
+                error: 1,
+                message: err.response.message
+            }
+        }
     }
 
-    @Get('/:id')
-        getUserProfilePhoto(
-            @Res({ passthrough: true }) res: Response
-        ): StreamableFile {
+    @Get('user-avatar')
+    async getUserAvatarById(
+        @Res({ passthrough: true }) res: Response,
+        @Req() request: Request
+    ): Promise<StreamableFile> {
+        const cookies = request.cookies;
+        try {
+            const imageId = await this.userService.getUserAvatarById(cookies)
             res.set({'Content-Type': 'image/jpg'});
-
-            const imageLocation = getImagesById("2b937a67eaac1484b5e036d3e08012f1")
+            const imageLocation = getImagesById(imageId)
             const file = createReadStream(imageLocation);
             return new StreamableFile(file);
+        } catch (err) {
+            console.error("user.controller.ts uploadUserAvatar: ", err)
         }
+    }
 }

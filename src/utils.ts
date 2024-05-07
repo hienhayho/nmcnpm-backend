@@ -1,7 +1,7 @@
 export const getImagesFolder = () => {
-    return `${process.cwd()}/${process.env.IMG_DEST}`
+    return `${process.cwd()}/images`
 }
 
 export const getImagesById = (id: string) => {
-    return `${process.cwd()}/${process.env.IMG_DEST}/${id}`
+    return `${process.cwd()}/images/${id}`
 }
