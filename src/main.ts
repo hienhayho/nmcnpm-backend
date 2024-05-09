@@ -1,14 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 import { join } from 'path';
 import * as fs from 'fs'
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  var dir = join(process.cwd(), "images")
+  const dir = join(process.cwd(), "images")
   if (!fs.existsSync(dir)){
     fs.mkdirSync(dir)
   }

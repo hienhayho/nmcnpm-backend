@@ -18,13 +18,15 @@ export class AuthController {
     @Post("login")
     async login(@Res({ passthrough: true }) response: Response, @Body() userInfo: UserLogin) {
         try {
-            const access_token = await this.loginService.login(userInfo)
+            const { access_token, roleId } = await this.loginService.login(userInfo)
             if (access_token) {
                 response.cookie("access_token", access_token)
+                response.cookie("role_id", roleId)
                 return {
                     status: HttpStatus.OK,
                     error: 0,
-                    authentication_token: access_token
+                    authentication_token: access_token,
+                    role_id: roleId
                 }
             }
             return {

@@ -15,8 +15,11 @@ export class LoginService {
 
     async login(userInfo: UserLogin) {
         const userName = userInfo.userName
-        const user = await this.userService.findBy({
-            userName: userName,
+        const user = await this.userService.find({
+            where: {userName: userName},
+            relations: {
+                role: true
+            }
         })
         if (user.length === 0) {
             throw new Error("invalid authentication credentials")
@@ -25,11 +28,12 @@ export class LoginService {
         if (!isMatch) {
             throw new Error("invalid authentication credentials")
         }
-        
+
         const userId = String(user[0].id)
         const payload = { id: userId };
         return {
           access_token: await this.jwtService.signAsync(payload),
+          roleId: user[0].role.id
         };
     }
 }
