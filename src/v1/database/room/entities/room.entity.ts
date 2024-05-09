@@ -1,4 +1,4 @@
-import { BeforeInsert, BeforeUpdate, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { RoomType } from "../../room_type/entities/room_type.entity";
 import { CreateDateColumn, UpdateDateColumn } from "typeorm";
 import * as moment from 'moment-timezone';
@@ -7,6 +7,12 @@ import * as moment from 'moment-timezone';
 export class Room {
     @PrimaryGeneratedColumn("increment")
     id: number;
+
+    @Column({
+        unique: true,
+        nullable: false
+    })
+    roomNumber: number
 
     @ManyToOne(() => RoomType)
     roomType: RoomType

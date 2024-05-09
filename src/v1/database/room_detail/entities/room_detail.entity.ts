@@ -18,13 +18,13 @@ export class RoomDetail {
     room: Room
 
     @Column()
-    number_users: number
+    numberUsers: number
 
     @Column()
-    check_in: Date
+    checkIn: Date
 
     @Column()
-    check_out: Date
+    checkOut: Date
 
     @Column()
     discount: number
@@ -33,8 +33,8 @@ export class RoomDetail {
     @JoinColumn()
     bill: Bill
 
-    @OneToMany(() => ServicesUsed, (services_used) => services_used.roomDetail)
-    services_used: ServicesUsed[]
+    @OneToMany(() => ServicesUsed, (servicesUsed) => servicesUsed.roomDetail)
+    servicesUsed: ServicesUsed[]
 
     @CreateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
     createdAt: Date;

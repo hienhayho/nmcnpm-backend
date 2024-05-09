@@ -6,7 +6,7 @@ import { Service } from "../../services/entities/service.entity";
 @Entity()
 export class ServicesUsed {
     @PrimaryGeneratedColumn("identity")
-    servicesUsed: number
+    servicesUsedId: number
 
     @ManyToOne(() => RoomDetail)
     roomDetail: RoomDetail
