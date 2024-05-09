@@ -89,7 +89,7 @@ export class UserService {
       throw new UnauthorizedException({ message: "token not found !" })
     }
     const JWT_KEY = process.env.JWT_KEY;
-    let payload;
+    let payload: object;
     try {
       payload = await this.jwtService.verifyAsync(
         token.access_token,
@@ -125,7 +125,7 @@ export class UserService {
       throw new UnauthorizedException({ message: "token not found" });
     }
     const JWT_KEY = process.env.JWT_KEY
-    let payload;
+    let payload: object;
     try {
       payload = await this.jwtService.verifyAsync(
         token.access_token,
@@ -198,10 +198,10 @@ export class UserService {
         throw new UnauthorizedException({ message: "token not found" });
       }
       const JWT_KEY = process.env.JWT_KEY
-      let payload;
+      let payload: object;
       try {
         payload = await this.jwtService.verifyAsync(
-          token.access_token,
+          token,
           {
             secret: JWT_KEY
           }
@@ -236,10 +236,10 @@ export class UserService {
         throw new UnauthorizedException({ message: "token not found" });
       }
       const JWT_KEY = process.env.JWT_KEY
-      let payload;
+      let payload: object;
       try {
         payload = await this.jwtService.verifyAsync(
-          token.access_token,
+          token,
           {
             secret: JWT_KEY
           }
