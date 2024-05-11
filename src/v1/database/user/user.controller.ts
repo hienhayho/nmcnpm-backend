@@ -9,7 +9,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { join } from 'path';
 import { UpdateImageDto } from './dto/user.update.image.dto';
-import {Response} from 'express'
+import { Response } from 'express'
 import { createReadStream } from 'fs';
 import { getImagesById, getImagesFolder } from '@/utils';
 
@@ -112,40 +112,18 @@ export class UserController {
         }
     }
 
-    @ApiOperation({ summary: "Delete user by condition, only allow: userName, email, id." })
-    @Delete('delete-user-by-condition')
-    async deleteUser(@Query("condition") condition: string, @Query("value") value: string, @Req() request: Request) {
-        const cookies = request.cookies;
-        try {
-            const result = await this.userService.deleteUser(cookies, condition, value)
-            return {
-                status: HttpStatus.OK,
-                error: 0,
-                message: "Delete user successfully",
-                data: result
-            }
-        } catch (err) {
-            console.error("user.controller.ts deleteUser: ", err)
-            return {
-                status: err.status,
-                error: 1,
-                message: err.response.message
-            }
-        }
-    }
-
     @ApiOperation({ summary: "Upload avatar for user" })
     @Post('user-avatar/upload')
     @ApiConsumes('multipart/form-data')
-    @UseInterceptors(FileInterceptor('file',{
+    @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
             destination: getImagesFolder()
         })
     }))
-    async uploadUserAvatar(@Body() data: UpdateImageDto, @UploadedFile() file: Express.Multer.File,@Req() request: Request) {
+    async uploadUserAvatar(@Body() data: UpdateImageDto, @UploadedFile() file: Express.Multer.File, @Req() request: Request) {
         const cookies = request.cookies;
         try {
-            const result = await this.userService.uploadUserAvatar(file.filename,cookies)
+            const result = await this.userService.uploadUserAvatar(file.filename, cookies)
             return {
                 status: HttpStatus.OK,
                 error: 0,
@@ -169,7 +147,7 @@ export class UserController {
         const cookies = request.cookies;
         try {
             const imageId = await this.userService.getUserAvatarById(cookies)
-            res.set({'Content-Type': 'image/jpg'});
+            res.set({ 'Content-Type': 'image/jpg' });
             const imageLocation = getImagesById(imageId)
             const file = createReadStream(imageLocation);
             return new StreamableFile(file);
