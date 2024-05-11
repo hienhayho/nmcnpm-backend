@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Service } from './entities/service.entity';
 import { In, Repository } from 'typeorm';
-import { AddNewServiceDto } from '../../admin/dto/service.addNewService.dto';
+import { Service } from './entities/service.entity';
+import { AddNewServiceDto } from '@/v1/admin/dto/service.addNewService.dto';
+import { UpdateServiceDto } from '@/v1/admin/dto/service.update.dto';
 
 @Injectable()
 export class ServicesService {
@@ -41,5 +42,16 @@ export class ServicesService {
       return new BadRequestException({ message: `No service with id=${serviceId} found in db` });
     }
     return await this.serviceServices.remove(service)
+  }
+
+  async updateServiceById(serviceData: UpdateServiceDto) {
+    const { serviceId, name, price } = serviceData;
+    const service = await this.serviceServices
+      .createQueryBuilder()
+      .update(Service)
+      .set({ name: name, price: price })
+      .where("id = :id", { id: serviceId })
+      .execute()
+    return service
   }
 }

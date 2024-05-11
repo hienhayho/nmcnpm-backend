@@ -7,6 +7,7 @@ import { Request } from 'express';
 import { AddNewServiceDto } from './dto/service.addNewService.dto';
 import { ServicesService } from '../database/services/services.service';
 import { DeleteServiceDto } from './dto/service.delete.dto';
+import { UpdateServiceDto } from './dto/service.update.dto';
 
 @Controller('v1/admin')
 @ApiTags("admin")
@@ -77,6 +78,27 @@ export class AdminController {
         status: err.status,
         error: 1,
         message: err.response.message
+      }
+    }
+  }
+
+  @ApiOperation({ summary: "Update service by Id with name and price" })
+  @Patch("service")
+  async updateServiceById(@Body() serviceData: UpdateServiceDto) {
+    try {
+      const result = await this.servicesService.updateServiceById(serviceData)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Update service successfully.",
+        data: result
+      }
+    } catch (err) {
+      console.error("admin.controller.ts updateServiceById: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
   }

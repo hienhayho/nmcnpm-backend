@@ -7,6 +7,7 @@ import { AppLoggerMiddleware } from './middleware/request.logging';
 import { AuthModule } from './v1/auth/auth.module';
 import { RoomTypeModule } from './v1/database/room_type/room_type.module';
 import { ServicesModule } from './v1/database/services/services.module';
+import { AdminModule } from './v1/admin/admin.module';
 
 @Module({
   imports: [
@@ -25,11 +26,12 @@ import { ServicesModule } from './v1/database/services/services.module';
         synchronize: true,
       }),
     }),
+    AdminModule,
     AuthModule,
     UserModule,
     RoleModule,
     RoomTypeModule,
-    ServicesModule
+    ServicesModule,
   ]
 })
 export class AppModule {
