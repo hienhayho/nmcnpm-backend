@@ -19,7 +19,7 @@ export class RoomTypeService {
   }
 
   async getRoomTypeWithItsServices(id: number) {
-    const roomType = await this.roomTypeService.find({
+    const roomType = await this.roomTypeService.findOne({
       select: {
         id: true,
         name: true,
@@ -40,8 +40,7 @@ export class RoomTypeService {
       },
       where: { id: id },
     })
-    console.log(roomType)
-    if (roomType.length == 0) {
+    if (roomType == null) {
       throw new BadRequestException({ message: `Room type with id=${id} was not exist in database.` });
     }
     return roomType
