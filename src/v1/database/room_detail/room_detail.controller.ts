@@ -26,7 +26,7 @@ export class RoomDetailController {
             return {
                 status: err.status,
                 error: 1,
-                message: err.response.message
+                message: err.response.message ?? err.message ?? "Internal Server Error!"
             }
         }
     }
@@ -47,7 +47,7 @@ export class RoomDetailController {
             return {
                 status: err.status,
                 error: 1,
-                message: err.response.message
+                message: err.response.message ?? err.message ?? "Internal Server Error!"
             }
         }
     }

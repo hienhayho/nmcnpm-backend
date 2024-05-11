@@ -1,12 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDateString, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsDateString, IsNotEmpty, IsNumber, IsString, Max, Min } from "class-validator";
 import { CreateDateColumn } from "typeorm";
 
 class ServiceUsedDTO {
     @ApiProperty({
         type: Number
     })
-    id: Number;
+    id: number;
   
     @ApiProperty({
         type: String
@@ -16,12 +16,12 @@ class ServiceUsedDTO {
     @ApiProperty({
         type: Number
     })
-    price: string;
+    price: number;
 
     @ApiProperty({
         type: Number
     })
-    quantity: string;
+    quantity: number;
   }
 
 export class CreateRoomDetailDto {
@@ -35,6 +35,8 @@ export class CreateRoomDetailDto {
     })
     numUser: number
 
+    @Min(0)
+    @Max(100)
     @ApiProperty({
         type: Number
     })

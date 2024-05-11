@@ -12,10 +12,14 @@ import { User } from '../user/entities/user.entity';
 import { Role } from '../role/entities/role.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Bill } from '../bill/entities/bill.entity';
+import { ServicesUsed } from '../services_used/entities/services_used.entity';
+import { RoomType } from '../room_type/entities/room_type.entity';
+import { Room } from '../room/entities/room.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RoomDetail,Service,User, Role]),
+    TypeOrmModule.forFeature([RoomDetail,Service,User, Role,Bill,ServicesUsed,Room]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -27,6 +31,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   })
   ],
   controllers: [RoomDetailController,ServicesController],
-  providers: [RoomDetailService,ServicesService,UserService]
+  providers: [RoomDetailService,ServicesService]
 })
 export class RoomDetailModule {}
