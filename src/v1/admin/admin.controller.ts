@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Req, HttpStatus } from '@nestjs/common';
-import { AdminService } from './admin.service';
 import { AdminAuth } from '@/middleware/authenticate';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../database/user/user.service';
@@ -8,6 +7,8 @@ import { AddNewServiceDto } from './dto/service.addNewService.dto';
 import { ServicesService } from '../database/services/services.service';
 import { DeleteServiceDto } from './dto/service.delete.dto';
 import { UpdateServiceDto } from './dto/service.update.dto';
+import { AddNewRoomTypeDto } from './dto/roomType.addNewRoomType.dto';
+import { RoomTypeService } from '../database/room_type/room_type.service';
 
 @Controller('v1/admin')
 @ApiTags("admin")
@@ -15,7 +16,8 @@ import { UpdateServiceDto } from './dto/service.update.dto';
 export class AdminController {
   constructor(
     private readonly userService: UserService,
-    private readonly servicesService: ServicesService
+    private readonly servicesService: ServicesService,
+    private readonly roomTypeService: RoomTypeService
   ) { }
 
   @ApiOperation({ summary: "Add a new service." })
@@ -52,6 +54,27 @@ export class AdminController {
       }
     } catch (err) {
       console.error("admin.controller.ts deleteService: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
+  }
+
+  @ApiOperation({ summary: "Add new room type." })
+  @Post("room-type")
+  async createRoomType(@Body() roomTypeInput: AddNewRoomTypeDto) {
+    try {
+      const result = await this.roomTypeService.createRoomType(roomTypeInput)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "create room type successfully.",
+        data: result
+      }
+    } catch (err) {
+      console.error("admin.controller.ts createRoomType: ", err)
       return {
         status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
         error: 1,

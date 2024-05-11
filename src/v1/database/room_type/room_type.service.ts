@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoomType } from './entities/room_type.entity';
 import { Repository } from 'typeorm';
-import { AddNewRoomTypeDto } from './dto/roomType.addNewRoomType.dto';
+import { AddNewRoomTypeDto } from '../../admin/dto/roomType.addNewRoomType.dto';
 import { ServicesService } from "../services/services.service"
 import { RoomService } from '../room-service/entities/room-service.entity';
 

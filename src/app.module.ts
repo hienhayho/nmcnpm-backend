@@ -8,6 +8,7 @@ import { AuthModule } from './v1/auth/auth.module';
 import { RoomTypeModule } from './v1/database/room_type/room_type.module';
 import { ServicesModule } from './v1/database/services/services.module';
 import { AdminModule } from './v1/admin/admin.module';
+import { RoomDetailModule } from './v1/database/room_detail/room_detail.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AdminModule } from './v1/admin/admin.module';
     RoleModule,
     RoomTypeModule,
     ServicesModule,
+    RoomDetailModule,
   ]
 })
 export class AppModule {
