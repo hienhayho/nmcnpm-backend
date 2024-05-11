@@ -128,7 +128,7 @@ export class UserService {
     let payload: object;
     try {
       payload = await this.jwtService.verifyAsync(
-        token.access_token,
+        token,
         {
           secret: JWT_KEY
         }
@@ -228,7 +228,7 @@ export class UserService {
     }
   }
 
-  async getUserAvatarById(cookies: Record<string, any>){
+  async getUserAvatarById(cookies: Record<string, any>) {
     try {
       // get access_token from cookies
       const token = cookies["access_token"]
@@ -258,7 +258,7 @@ export class UserService {
       }
 
       if (user.avatar == null) {
-        if (user.gender == 1){
+        if (user.gender == 1) {
           return "male.png"
         } else {
           return "female.png"
