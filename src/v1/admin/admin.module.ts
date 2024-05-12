@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AdminService } from './admin.service';
@@ -12,11 +12,22 @@ import { ServicesService } from '../database/services/services.service';
 import { RoomType } from '../database/room_type/entities/room_type.entity';
 import { RoomTypeService } from '../database/room_type/room_type.service';
 import { RoomServiceService } from '../database/room-service/room-service.service';
-import { RoomService } from '../database/room/room.service';
+import { RoomService } from '../database/room-service/entities/room-service.entity';
+import { Bill } from '../database/bill/entities/bill.entity';
+import { BillService } from '../database/bill/bill.service';
+import { RoomServices } from '../database/room/room.service';
+import { Room } from '../database/room/entities/room.entity';
+import { RoomDetail } from '../database/room_detail/entities/room_detail.entity';
+import { RoomDetailService } from '../database/room_detail/room_detail.service';
+import { ServicesUsed } from '../database/services_used/entities/services_used.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Role, Service, RoomType, RoomService]),
+    TypeOrmModule.forFeature([
+      User, Role, Service, 
+      RoomType, RoomService, 
+      Room, RoomDetail, Bill, ServicesUsed
+    ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -32,8 +43,13 @@ import { RoomService } from '../database/room/room.service';
     AdminService,
     UserService,
     ServicesService,
+    RoomServices,
     RoomTypeService,
-    RoomServiceService
-  ]
+    RoomServiceService,
+    RoomDetailService,
+    BillService,
+    JwtService
+  ],
+  exports: [JwtService]
 })
 export class AdminModule { }

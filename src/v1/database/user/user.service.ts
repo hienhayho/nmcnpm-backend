@@ -7,6 +7,7 @@ import { User } from './entities/user.entity';
 import { Role } from '../role/entities/role.entity';
 import { UserBackendDto } from './dto/user.backend.dto';
 import { UserUpdate } from './dto/user.update.dto';
+import { Bill } from '../bill/entities/bill.entity';
 
 
 @Injectable()
@@ -14,8 +15,30 @@ export class UserService {
   constructor(
     @InjectRepository(User) private readonly userService: Repository<User>,
     @InjectRepository(Role) private readonly roleService: Repository<Role>,
+    @InjectRepository(Bill) private readonly billService: Repository<Bill>,
     private jwtService: JwtService
   ) { }
+
+  async getUserIdFromCookies(cookies: Record<string, any>) {
+    const token = cookies["access_token"]
+    if (!token) {
+      throw new UnauthorizedException({ message: "token not found !" })
+    }
+    const JWT_KEY = process.env.JWT_KEY;
+    let payload: object;
+    try {
+      payload = await this.jwtService.verifyAsync(
+        token.access_token,
+        {
+          secret: JWT_KEY
+        }
+      );
+    } catch (err) {
+      throw new UnauthorizedException({ message: "token expired" });
+    }
+    const id = payload["id"]
+    return id
+  }
 
   async getAllUser() {
     try {
@@ -29,6 +52,18 @@ export class UserService {
       console.error("user.sevice.ts getAllUser: ", err.message)
       throw new InternalServerErrorException({ message: "Something went wrong! Please try again later." })
     }
+  }
+
+  async getAllBills(cookies: Record<string, any>) {
+    const id = await this.getUserIdFromCookies(cookies)
+    const allBills = await this.billService.find({
+      where: {
+        user: {
+          id: id
+        }
+      }
+    })
+    return allBills
   }
 
   async getUserByCondition(condition: string, value: string) {
@@ -84,23 +119,7 @@ export class UserService {
   }
 
   async updateUserById(userData: UserUpdate, cookies: Record<string, any>) {
-    const token = cookies["access_token"]
-    if (!token) {
-      throw new UnauthorizedException({ message: "token not found !" })
-    }
-    const JWT_KEY = process.env.JWT_KEY;
-    let payload: object;
-    try {
-      payload = await this.jwtService.verifyAsync(
-        token.access_token,
-        {
-          secret: JWT_KEY
-        }
-      );
-    } catch (err) {
-      throw new UnauthorizedException({ message: "token expired" });
-    }
-    const id = payload["id"]
+    const id = await this.getUserIdFromCookies(cookies)
     const user = await this.userService.findOne({
       where: {
         id: id
@@ -143,7 +162,7 @@ export class UserService {
         relations: ["role"]
       }
     )
-    if (admin.role.id >= 3) {
+    if (admin.role.id > 1) {
       throw new BadRequestException({ message: "not allowed to delete user" });
     }
 
@@ -155,7 +174,7 @@ export class UserService {
       if (!user) {
         throw new BadRequestException({ message: "user not found" });
       }
-      if (user.role.id < 4) {
+      if (admin.role.id > 1) {
         throw new BadRequestException({ message: "not allowed to delete user" });
       }
       return await this.userService.remove(user)
@@ -169,7 +188,7 @@ export class UserService {
       if (!user) {
         throw new BadRequestException({ message: "user not found" });
       }
-      if (user.role.id < 4) {
+      if (admin.role.id > 1) {
         throw new BadRequestException({ message: "not allowed to delete user" });
       }
       return await this.userService.remove(user)
@@ -183,7 +202,7 @@ export class UserService {
       if (!user) {
         throw new BadRequestException({ message: "user not found" });
       }
-      if (user.role.id < 4) {
+      if (admin.role.id > 1) {
         throw new BadRequestException({ message: "not allowed to delete user" });
       }
       return await this.userService.remove(user)
@@ -231,23 +250,7 @@ export class UserService {
   async getUserAvatarById(cookies: Record<string, any>) {
     try {
       // get access_token from cookies
-      const token = cookies["access_token"]
-      if (!token) {
-        throw new UnauthorizedException({ message: "token not found" });
-      }
-      const JWT_KEY = process.env.JWT_KEY
-      let payload: object;
-      try {
-        payload = await this.jwtService.verifyAsync(
-          token,
-          {
-            secret: JWT_KEY
-          }
-        );
-      } catch (err) {
-        throw new UnauthorizedException({ message: "token expired" });
-      }
-      const userId = payload["id"]
+      const userId = await this.getUserIdFromCookies(cookies);
       const user = await this.userService.findOne(
         {
           where: { id: userId },

@@ -33,10 +33,10 @@ import { RoomModule } from './v1/database/room/room.module';
     AuthModule,
     UserModule,
     RoleModule,
-    RoomTypeModule,
     ServicesModule,
+    RoomTypeModule,
+    RoomModule,
     RoomDetailModule,
-    RoomModule
   ]
 })
 export class AppModule {

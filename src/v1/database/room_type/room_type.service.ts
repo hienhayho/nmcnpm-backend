@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { AddNewRoomTypeDto } from '../../admin/dto/roomType.addNewRoomType.dto';
 import { ServicesService } from "../services/services.service"
 import { RoomService } from '../room-service/entities/room-service.entity';
+import { UpdateRoomTypeDto } from '@/v1/admin/dto/roomType.update.dto';
+import { DeleteRoomTypeDto } from '@/v1/admin/dto/roomType.delete.dto';
 
 @Injectable()
 export class RoomTypeService {
@@ -14,8 +16,22 @@ export class RoomTypeService {
     private serviceService: ServicesService,
   ) { }
   async getAllRoomType() {
-    const result = await this.roomTypeService.find({});
+    const result = await this.roomTypeService.find({
+      relations: {
+        roomService: {
+          service: true
+        }
+      }
+    });
     return result;
+  }
+
+  async getRoomTypeById(id: number) {
+    return await this.roomTypeService.findOne({
+      where: {
+        id: id
+      }
+    })
   }
 
   async getRoomTypeWithItsServices(id: number) {
@@ -25,6 +41,7 @@ export class RoomTypeService {
         name: true,
         capacity: true,
         priceBase: true,
+        desc: true,
         roomService: {
           id: true,
           service: {
@@ -52,6 +69,7 @@ export class RoomTypeService {
     roomType.name = roomTypeInput.name
     roomType.capacity = roomTypeInput.capacity
     roomType.priceBase = roomTypeInput.priceBase
+    roomType.desc = roomTypeInput.desc
 
     const roomTypeSaved = await this.roomTypeService.save(roomType)
 
@@ -66,5 +84,53 @@ export class RoomTypeService {
     await this.roomServiceService.insert(roomServices);
 
     return roomTypeSaved
+  }
+
+  async updateRoomType(roomTypeInput: UpdateRoomTypeDto) {
+    const { roomTypeId, name, desc, capacity, priceBase, service_names } = roomTypeInput;
+    // Delete old room type
+    
+    const roomTypeSaved = await this.roomTypeService.find({
+      where: {
+        id: roomTypeId
+      }
+    })
+
+    // Delete existed related rows
+    await this.roomServiceService.delete({
+      roomType: {
+        id: roomTypeId
+      }
+    })
+
+    const updatedRoomType = await this.roomTypeService
+    .createQueryBuilder()
+    .update(RoomType)
+    .set({name: name, desc: desc, priceBase: priceBase, capacity: capacity})
+    .where("id = :id", {id: roomTypeId})
+    .execute()
+    
+    const services = await this.serviceService.getServiceByNames(service_names)
+    const roomServices: RoomService[] = []
+    for (let i = 0; i < services.length; i++) {
+      const roomService = new RoomService()
+      roomService.service = services[i]
+      roomService.roomType = roomTypeSaved[0]
+      roomServices.push(roomService)
+    }
+
+    await this.roomServiceService.insert(roomServices);
+
+    return {
+      updatedRoomType,
+      roomServices
+    }
+  }
+
+  async deleteRoomType(roomTypeId: DeleteRoomTypeDto) {
+    const result = await this.roomTypeService.delete({
+      id: roomTypeId.roomTypeId
+    })
+    return result
   }
 }

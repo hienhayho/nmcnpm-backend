@@ -1,5 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Req, Res, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Request } from "express";
+import { Body, Controller, Get, HttpStatus, Param, Patch, Post, Query, Req, Res, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { AddNewUserDto } from './dto/user.addNewUser.dto';
@@ -7,9 +6,8 @@ import { UserUpdate } from './dto/user.update.dto';
 import { AuthGuard } from '@/middleware/authenticate';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { join } from 'path';
 import { UpdateImageDto } from './dto/user.update.image.dto';
-import { Response } from 'express'
+import { Response, Request } from 'express'
 import { createReadStream } from 'fs';
 import { getImagesById, getImagesFolder } from '@/utils';
 
@@ -21,11 +19,12 @@ export class UserController {
         private readonly userService: UserService
     ) { }
 
-    @ApiOperation({ summary: "Get all users from database." })
-    @Get()
-    async getAllUser() {
+    @ApiOperation({ summary: "Get all bills." })
+    @Get("bills")
+    async getAllBills(@Req() request: Request) {
         try {
-            const allUser = await this.userService.getAllUser();
+            const cookies = request.cookies
+            const allUser = await this.userService.getAllBills(cookies);
             return {
                 status: HttpStatus.OK,
                 error: 0,
@@ -43,7 +42,7 @@ export class UserController {
     }
 
     @ApiOperation({ summary: "Get user by condition, only allows userName, email, Id." })
-    @Get("get-user-by-condition")
+    @Get("get_user_by_condition")
     async getUserByCondition(@Query("condition") condition: string, @Query("value") value: string) {
         try {
             const allUser = await this.userService.getUserByCondition(condition, value);
@@ -59,33 +58,6 @@ export class UserController {
                 status: err.status,
                 error: 1,
                 message: err.response.message
-            }
-        }
-    }
-
-    @ApiOperation({ summary: "Add new user with user Id." })
-    @Post("add-new-user-by-roleId/:roleId")
-    async addNewUser(@Param("roleId") roleId: number, @Body() userInfo: AddNewUserDto) {
-        try {
-            const userData = {
-                ...userInfo,
-                roleId: roleId
-            }
-            const result = await this.userService.addNewUser(userData)
-            if (result) {
-                return {
-                    status: HttpStatus.CREATED,
-                    error: 0,
-                    message: "Add new user successfully.",
-                    data: result
-                }
-            }
-        } catch (err) {
-            console.error("user.controller.ts addNewUser: ", err)
-            return {
-                status: err.status,
-                error: 1,
-                message: err.response.message || err.message
             }
         }
     }
@@ -113,7 +85,7 @@ export class UserController {
     }
 
     @ApiOperation({ summary: "Upload avatar for user" })
-    @Post('user-avatar/upload')
+    @Post('user_avatar/upload')
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
@@ -139,7 +111,7 @@ export class UserController {
         }
     }
 
-    @Get('user-avatar')
+    @Get('user_avatar')
     async getUserAvatarById(
         @Res({ passthrough: true }) res: Response,
         @Req() request: Request

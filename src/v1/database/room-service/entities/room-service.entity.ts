@@ -8,32 +8,42 @@ export class RoomService {
     @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @ManyToOne(() => RoomType, {nullable: false})
+    @ManyToOne(() => RoomType, roomType => roomType.roomService, {
+        nullable: false,
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
+    })
     roomType: RoomType
 
-    @ManyToOne(() => Service, {nullable: false})
+    @ManyToOne(() => Service, service => service.roomService, {
+        nullable: false,
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
+    })
     service: Service
 
-    @CreateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
     createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
     updatedAt: Date;
 
     @BeforeInsert()
     insertCreated() {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         this.createdAt = new Date(
-            moment().utc().format("YYYY-MM-DD HH:mm:ss")
+            moment().tz(timezone).format()
         );
         this.updatedAt = new Date(
-            moment().utc().format("YYYY-MM-DD HH:mm:ss")
+            moment().tz(timezone).format()
         );
     }
 
     @BeforeUpdate()
     insertUpdated() {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         this.updatedAt = new Date(
-            moment().utc().format("YYYY-MM-DD hh:mm:ss")
+            moment().tz(timezone).format()
         )
     }
 }

@@ -7,7 +7,7 @@ import { AuthGuard } from '@/middleware/authenticate';
 
 @Controller('v1/role')
 @ApiTags('role')
-@UseGuards(new AuthGuard())
+// @UseGuards(new AuthGuard())
 export class RoleController {
   constructor(private readonly roleService: RoleService) { }
 
@@ -58,7 +58,7 @@ export class RoleController {
   }
 
   @ApiOperation({ summary: "Get role by Id." })
-  @Get("get-role-by-id/:id")
+  @Get("get_role_by_id/:id")
   async getRoleById(@Param("id") roleId: number) {
     console.log(roleId)
     try {
@@ -103,7 +103,7 @@ export class RoleController {
   }
 
   @ApiOperation({ summary: "Delete a role by Id." })
-  @Delete("delete-role-by-id/:id")
+  @Delete("delete_role_by_id/:id")
   async deleteRole(@Param("id") roleId: number) {
     try {
       const role = await this.roleService.deleteRole(roleId);

@@ -1,14 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, UseGuards, UseInterceptors, UploadedFile, Res, StreamableFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpStatus, UseGuards } from '@nestjs/common';
 import { ServicesService } from './services.service';
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AddNewServiceDto } from '../../admin/dto/service.addNewService.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@/middleware/authenticate';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { UploadDto } from './dto/service.upload.dto';
-import { Response } from 'express'
-import { join } from 'path';
-import { createReadStream } from 'fs';
 
 @Controller('v1/services')
 @ApiTags("services")
@@ -38,7 +31,7 @@ export class ServicesController {
   }
 
   @ApiOperation({ summary: "Get service in a list of names." })
-  @Post("get-services-by-name")
+  @Post("get_services_by_name")
   async getServiceByNames(@Body() serviceNames: string[]) {
     try {
       const result = await this.servicesService.getServiceByNames(serviceNames)
@@ -49,7 +42,7 @@ export class ServicesController {
         data: result
       }
     } catch (err) {
-      console.error("room_type.controller.ts getAllRoomType: ", err)
+      console.error("services.controller.ts getAllRoomType: ", err)
       return {
         status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
         error: 1,
@@ -57,7 +50,4 @@ export class ServicesController {
       }
     }
   }
-
-
-
 }

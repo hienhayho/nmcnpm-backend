@@ -2,23 +2,47 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpStatu
 import { RoomDetailService } from './room_detail.service';
 import { CreateRoomDetailDto } from './dto/create-room_detail.dto';
 import { AuthGuard } from '@/middleware/authenticate';
-import { ApiTags } from '@nestjs/swagger';
-import {Request} from "express"
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Request } from "express"
 
-@Controller('room-detail')
+@Controller('v1/room_detail')
 @ApiTags("room detail")
 @UseGuards(new AuthGuard())
 export class RoomDetailController {
   constructor(private readonly roomDetailService: RoomDetailService) {}
 
-  @Get("get-by-room-id/:roomid")
-    async getRoomDetailByRoomId(@Param("roomid") roomId: number) {
+    @ApiOperation({summary: "Get room booked by userId"})
+    @Get()
+    async getRoomDetailBooked(@Req() request: Request) {
         try {
-            const result = await this.roomDetailService.getRoomDetailByRoomId(roomId);
+            const cookies = request.cookies
+            const result = await this.roomDetailService.getRoomDetailBooked(cookies);
             return {
                 status: HttpStatus.OK,
                 error: 0,
-                message: "get room successfully",
+                message: "Create room successfully",
+                data: result
+            }
+        } catch (err) {
+            console.error("room_detail.controller.ts getRoomDetailBooked: ", err.message);
+            return {
+                status: err.status,
+                error: 1,
+                message: err.response.message ?? err.message ?? "Internal Server Error!"
+            }
+        }
+    }    
+    
+    @ApiOperation({summary: "Get room detail by id."})
+    @Get("get_by_room_id/:id")
+    async getRoomDetailByRoomId(@Param("id") id: string) {
+        try {
+            const numRoomId = parseInt(id)
+            const result = await this.roomDetailService.getRoomDetailById(numRoomId);
+            return {
+                status: HttpStatus.OK,
+                error: 0,
+                message: "get room detail successfully",
                 data: result
             }
         } catch (err) {
@@ -31,7 +55,7 @@ export class RoomDetailController {
         }
     }
 
-  @Post("create")
+    @Post("create")
     async createRoomDetail(@Body() roomDetailReq: CreateRoomDetailDto,@Req() request: Request) {
         try {
             const cookies = request.cookies
@@ -51,5 +75,26 @@ export class RoomDetailController {
             }
         }
     }
-  
+
+    @ApiOperation({summary: "Delete room detail by id."})
+    @Delete("delete/:id")
+    async deleteRoomDetailById(@Param("id") id: string) {
+        try {
+            const numId = parseInt(id)
+            const result = await this.roomDetailService.deleteRoomDetailById(numId);
+            return {
+                status: HttpStatus.OK,
+                error: 0,
+                message: "delete room detail successfully",
+                data: result
+            }
+        } catch (err) {
+            console.error("room_detail.controller.ts deleteRoomDetailById", err.message);
+            return {
+                status: err.status,
+                error: 1,
+                message: err.response.message ?? err.message ?? "Internal Server Error!"
+            }
+        }
+    }
 }

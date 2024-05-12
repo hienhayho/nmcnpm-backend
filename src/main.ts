@@ -9,12 +9,15 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const dir = join(process.cwd(), "images")
-  if (!fs.existsSync(dir)){
+  if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
 
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({
+    credentials: true,
+    origin: "http://localhost:5050"
+  });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   const configService = app.get(ConfigService);

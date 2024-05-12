@@ -13,26 +13,28 @@ export class Role {
     @Column()
     name: string;
 
-    @CreateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
     createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
     updatedAt: Date;
 
     @BeforeInsert()
     insertCreated() {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         this.createdAt = new Date(
-            moment().utc().format("YYYY-MM-DD HH:mm:ss")
+            moment().tz(timezone).format()
         );
         this.updatedAt = new Date(
-            moment().utc().format("YYYY-MM-DD HH:mm:ss")
+            moment().tz(timezone).format()
         );
     }
 
     @BeforeUpdate()
     insertUpdated() {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         this.updatedAt = new Date(
-            moment().utc().format("YYYY-MM-DD hh:mm:ss")
+            moment().tz(timezone).format()
         )
     }
 }

@@ -4,7 +4,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AddNewRoomTypeDto } from '../../admin/dto/roomType.addNewRoomType.dto';
 import { AuthGuard } from '@/middleware/authenticate';
 
-@Controller('v1/room-type')
+@Controller('v1/room_type')
 @ApiTags("room_type")
 @UseGuards(new AuthGuard())
 export class RoomTypeController {
@@ -31,7 +31,7 @@ export class RoomTypeController {
   }
 
   @ApiOperation({ summary: "Get room type with its services." })
-  @Post("get-room-type/:id")
+  @Post("get_room_type/:id")
   async getRoomTypeWithItsServices(@Param("id") id: string) {
     const roomTypeId = parseInt(id)
     try {
@@ -51,6 +51,4 @@ export class RoomTypeController {
       }
     }
   }
-
-
 }

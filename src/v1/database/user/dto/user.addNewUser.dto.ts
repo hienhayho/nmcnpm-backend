@@ -41,7 +41,7 @@ export class AddNewUserDto {
     })
     gender: number;
 
-    @IsEmail()
+    @IsNumber()
     @ApiProperty({
         type: Number,
         default: -1,

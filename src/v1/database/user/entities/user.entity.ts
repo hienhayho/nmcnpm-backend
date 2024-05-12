@@ -67,26 +67,28 @@ export class User {
   )
   role: Role
 
-  @CreateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP(6)' })
+  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
   updatedAt: Date;
 
   @BeforeInsert()
   insertCreated() {
-    this.createdAt = new Date(
-      moment().utc().format("YYYY-MM-DD HH:mm:ss")
-    );
-    this.updatedAt = new Date(
-      moment().utc().format("YYYY-MM-DD HH:mm:ss")
-    );
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      this.createdAt = new Date(
+          moment().tz(timezone).format()
+      );
+      this.updatedAt = new Date(
+          moment().tz(timezone).format()
+      );
   }
 
   @BeforeUpdate()
   insertUpdated() {
-    this.updatedAt = new Date(
-      moment().utc().format("YYYY-MM-DD hh:mm:ss")
-    )
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      this.updatedAt = new Date(
+          moment().tz(timezone).format()
+      )
   }
 }

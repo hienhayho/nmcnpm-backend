@@ -1,39 +1,18 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpStatus } from '@nestjs/common';
-import { RoomService } from './room.service';
-import { CreateRoomDto } from './dto/create-room.dto';
-import { UpdateRoomDto } from './dto/update-room.dto';
+import { RoomServices } from './room.service';
 import { AuthGuard } from '@/middleware/authenticate';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@Controller('room')
+@Controller('v1/room')
 @UseGuards(new AuthGuard())
 @ApiTags("room")
 export class RoomController {
-  constructor(private readonly roomService: RoomService) {}
+  constructor(private readonly roomService: RoomServices) {}
 
-    @ApiOperation({ summary: "Create new room" })
-    @Post("")
-    async CreateNewRoom(@Body() roomInfo: CreateRoomDto) {
-        try {
-            const result = await this.roomService.CreateNewRoom(roomInfo)
-            return {
-              status: HttpStatus.CREATED,
-              error: 0,
-              message: "Create room successfully.",
-              data: result
-            }
-        } catch (err) {
-            console.error("room.controller.ts CreateNewRoom: ", err)
-            return {
-                status: err.status,
-                error: 1,
-                message: err.response.message || err.message
-            }
-        }
-    }
+    
 
     @ApiOperation({ summary: "get room by room number" })
-    @Get(":roomNumber")
+    @Get("get_room/:roomNumber")
     async GetRoomByRoomNumber(@Param("roomNumber") roomNumber: number) {
         try {
             const result = await this.roomService.GetRoomByRoomNumber(roomNumber)
@@ -54,7 +33,7 @@ export class RoomController {
     }
 
     @ApiOperation({ summary: "get all room" })
-    @Get("")
+    @Get("get_room")
     async GetAllRoom() {
         try {
             const result = await this.roomService.GetAllRoom()
@@ -66,6 +45,27 @@ export class RoomController {
             }
         } catch (err) {
             console.error("room.controller.ts GetAllRoom: ", err)
+            return {
+                status: err.status,
+                error: 1,
+                message: err.response.message || err.message
+            }
+        }
+    }
+
+    @ApiOperation({ summary: "get all room not booked" })
+    @Get("not_booked")
+    async GetAllRoomNotBooked() {
+        try {
+            const result = await this.roomService.GetAllRoomNotBooked()
+            return {
+              status: HttpStatus.CREATED,
+              error: 0,
+              message: "Get all room successfully.",
+              data: result
+            }
+        } catch (err) {
+            console.error("room.controller.ts GetAllRoomNotBooked: ", err)
             return {
                 status: err.status,
                 error: 1,

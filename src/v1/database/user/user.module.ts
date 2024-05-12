@@ -8,10 +8,11 @@ import { User } from './entities/user.entity';
 import { Role } from '../role/entities/role.entity';
 import { RoleController } from '../role/role.controller';
 import { RoleService } from '../role/role.service';
+import { Bill } from '../bill/entities/bill.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Role]),
+    TypeOrmModule.forFeature([User, Role, Bill]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
