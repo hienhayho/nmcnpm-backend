@@ -28,7 +28,7 @@ export class UserService {
     let payload: object;
     try {
       payload = await this.jwtService.verifyAsync(
-        token.access_token,
+        token,
         {
           secret: JWT_KEY
         }

@@ -1,7 +1,6 @@
 import { Body, Controller, Get, HttpStatus, Param, Patch, Post, Query, Req, Res, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { AddNewUserDto } from './dto/user.addNewUser.dto';
 import { UserUpdate } from './dto/user.update.dto';
 import { AuthGuard } from '@/middleware/authenticate';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -77,6 +76,29 @@ export class UserController {
             }
         } catch (err) {
             console.error("user.controller.ts getUserByCondition: ", err.message);
+            return {
+                status: err.status,
+                error: 1,
+                message: err.response.message
+            }
+        }
+    }
+
+    @ApiOperation({ summary: "Get current user info." })
+    @Get()
+    async getUserInfo(@Req() request: Request) {
+        const cookies = request.cookies
+        try {
+            const userId = await this.userService.getUserIdFromCookies(cookies)
+            const result = await this.userService.getUserByCondition("id", userId)
+            return {
+                status: HttpStatus.OK,
+                error: 0,
+                message: "Get current user successfully.",
+                data: result
+            }
+        } catch (err) {
+            console.error("user.controller.ts getUserInfo: ", err)
             return {
                 status: err.status,
                 error: 1,
