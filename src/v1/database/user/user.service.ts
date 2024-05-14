@@ -209,6 +209,13 @@ export class UserService {
     }
   }
 
+  async payBill(billId: number) {
+    return await this.billService.save({
+      id: billId,
+      paid: true
+    })
+  }
+
   async uploadUserAvatar(fileId: string, cookies: Record<string, any>) {
     try {
       // get access_token from cookies

@@ -14,17 +14,17 @@ export class RegisterService {
     ) { }
 
     async register(userInfo: UserRegister) {
-        const roleId = 4; //Check if user role id exist in database
+        const roleId = 2; //Check if user role id exist in database
         const role = await this.roleService.findBy({
             id: roleId,
         });
 
         if (role.length == 0) {
-            throw new BadRequestException({message: "Rold Id not exist in database."}) 
+            throw new BadRequestException({ message: "Rold Id not exist in database." })
         }
-        
+
         const userName = userInfo.userName
-        const users = await this.userService.findOne({where: {userName: userName}})
+        const users = await this.userService.findOne({ where: { userName: userName } })
         if (users) {
             throw new BadRequestException({
                 message: `userName = ${userName} has already existed in database.`
@@ -32,7 +32,7 @@ export class RegisterService {
         }
 
         const email = userInfo.email
-        const emails = await this.userService.findOne({where: {email: email}})
+        const emails = await this.userService.findOne({ where: { email: email } })
         if (emails) {
             throw new BadRequestException({
                 message: `email = ${email} has already existed in database.`

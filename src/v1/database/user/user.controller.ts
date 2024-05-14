@@ -41,6 +41,29 @@ export class UserController {
         }
     }
 
+    @ApiOperation({ summary: "Get all bills." })
+    @Post("bills/:id")
+    async payBill(@Req() request: Request, @Param("id") id: string) {
+        try {
+            const billId = parseInt(id)
+            const cookies = request.cookies;
+            const result = await this.userService.payBill(billId)
+            return {
+                status: HttpStatus.OK,
+                error: 0,
+                message: "Get all users successfully !",
+                data: result
+            }
+        } catch (err) {
+            console.error("user.controller.ts getAllUser: ", err.message);
+            return {
+                status: err.status,
+                error: 1,
+                message: err.response.message
+            }
+        }
+    }
+
     @ApiOperation({ summary: "Get user by condition, only allows userName, email, Id." })
     @Get("get_user_by_condition")
     async getUserByCondition(@Query("condition") condition: string, @Query("value") value: string) {
