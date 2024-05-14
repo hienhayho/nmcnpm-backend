@@ -342,4 +342,26 @@ export class AdminController {
       }
     }
   }
+
+  @ApiOperation({ summary: "delete room" })
+  @Delete("room/:id")
+  async deleteRommById(@Param("id") id: string ) {
+      try {
+          const roomId = parseInt(id)
+          const result = await this.roomService.deleteRommById(roomId)
+          return {
+            status: HttpStatus.OK,
+            error: 0,
+            message: "Delete room successfully.",
+            data: result
+          }
+      } catch (err) {
+          console.error("room.controller.ts deleteRommById: ", err)
+          return {
+              status: err.status,
+              error: 1,
+              message: err.response.message || err.message
+          }
+      }
+  }
 }

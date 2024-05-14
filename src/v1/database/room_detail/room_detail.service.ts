@@ -89,7 +89,7 @@ export class RoomDetailService {
   
   async createRoomDetail(cookies: Record<string, any>, roomDetailReq: CreateRoomDetailDto) {
       const {services_used} = roomDetailReq
-        // get access_token from cookies
+      // get access_token from cookies
       const token = cookies["access_token"]
       if (!token) {
         throw new UnauthorizedException({ message: "token not found" });
@@ -130,8 +130,7 @@ export class RoomDetailService {
         }
       }
 
-      // check capacity 
-
+      // check room features 
       const room = await this.roomService.findOne({
         where: {
           id: roomDetailReq.roomId
@@ -140,6 +139,13 @@ export class RoomDetailService {
           roomType: true
         }
       })
+
+      // check room active
+      if (!room.active){
+        throw new BadRequestException({ message: `Room with id=${room.id} is not active` })
+      }
+
+      // check room capacity
       if (room.roomType.capacity < roomDetailReq.numUser){
         throw new BadRequestException({ message: `Out of capacity=${room.roomType.capacity} with numberOfPeople=${roomDetailReq.numUser}` })
       }

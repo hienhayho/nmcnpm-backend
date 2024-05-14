@@ -11,10 +11,11 @@ import { ServicesController } from '../services/services.controller';
 import { ServicesService } from '../services/services.service';
 import { RoomDetail } from '../room_detail/entities/room_detail.entity';
 import { RoomService } from '../room-service/entities/room-service.entity';
+import { ServicesUsed } from '../services_used/entities/services_used.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Room, RoomType, Service, RoomService, RoomDetail]),
+    TypeOrmModule.forFeature([Room, RoomType, Service, RoomService, RoomDetail,ServicesUsed]),
   ],
   controllers: [RoomController, RoomTypeController, ServicesController],
   providers: [RoomServices, RoomTypeService, ServicesService]

@@ -3,15 +3,17 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { Room } from './entities/room.entity';
 import { RoomTypeService } from '../room_type/room_type.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository, In } from 'typeorm';
+import { Not, Repository, In, LessThan, MoreThan } from 'typeorm';
 import { RoomDetail } from '../room_detail/entities/room_detail.entity';
 import { UpdateRoomDto } from '../../admin/dto/room.update.dto';
+import { ServicesUsed } from '../services_used/entities/services_used.entity';
 
 @Injectable()
 export class RoomServices {
   constructor(
     @InjectRepository(Room) private readonly roomService: Repository<Room>,
     @InjectRepository(RoomDetail) private readonly roomDetailService: Repository<RoomDetail>,
+    @InjectRepository(ServicesUsed) private readonly servicedUsed: Repository<ServicesUsed>,
     private roomTypeService: RoomTypeService
   ) { }
   async CreateNewRoom(roomInfo: CreateRoomDto) {
@@ -23,7 +25,7 @@ export class RoomServices {
     })
 
     // check xem số phòng này đã có chưa
-    if (checkRoomNumber != null) {
+    if (checkRoomNumber) {
       throw new BadRequestException({ message: "This room number alrealdy in use" })
     }
 
@@ -45,7 +47,7 @@ export class RoomServices {
         roomType: true
       }
     })
-    if (room == null) {
+    if (!room) {
       throw new BadRequestException({ message: "this room number does not exists" });
     }
     return room
@@ -110,4 +112,51 @@ export class RoomServices {
     room.roomType = roomType;
     return await this.roomService.save(room)
   }
+
+  async deleteRommById(roomId : number){
+    const now = new Date()
+    const roomDetailByRoomIdNow = await this.roomDetailService.findOne({
+      where:{
+        room: {
+          id: roomId
+        },
+        checkIn: LessThan(now),
+        checkOut: MoreThan(now)
+      }
+    })
+    if (roomDetailByRoomIdNow) {
+      throw new BadRequestException({ message: `This room with id=${roomId} is already in use ` });
+    }
+
+    const roomDetailByRoomIdAfterNow = await this.roomDetailService.find({
+      where:{
+        room: {
+          id: roomId
+        },
+        checkIn: MoreThan(now),
+      }
+    })
+
+    const IdroomDetailByRoomIdAfterNow = roomDetailByRoomIdAfterNow.map((roomDetail)=>{
+      return roomDetail.id
+    })
+
+    await this.servicedUsed.delete({
+      roomDetail: {
+        id: In(IdroomDetailByRoomIdAfterNow)
+      }
+    })
+
+    await this.roomDetailService.delete({
+      checkIn: MoreThan(now)
+    })
+    
+    const result = await this.roomService.save({
+      id: roomId,
+      active: false
+    })
+
+    return result
+  }
+
 }
