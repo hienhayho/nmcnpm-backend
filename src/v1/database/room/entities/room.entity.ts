@@ -1,7 +1,7 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { RoomType } from "../../room_type/entities/room_type.entity";
 import { CreateDateColumn, UpdateDateColumn } from "typeorm";
 import * as moment from 'moment-timezone';
+import { RoomType } from "../../room_type/entities/room_type.entity";
 
 @Entity()
 export class Room {

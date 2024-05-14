@@ -14,13 +14,13 @@ async function bootstrap() {
   }
 
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
   app.enableCors({
     credentials: true,
-    origin: "http://localhost:5050"
+    origin: configService.get("FRONTEND_HOST") 
   });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
-  const configService = app.get(ConfigService);
   const config = new DocumentBuilder()
     .setTitle('NMCNPM BACKEND')
     .setDescription('Hotels Mangagement API')

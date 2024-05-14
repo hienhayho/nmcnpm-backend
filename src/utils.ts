@@ -1,5 +1,3 @@
-import { UnauthorizedException } from "@nestjs/common"
-
 export const getImagesFolder = () => {
     return `${process.cwd()}/images`
 }

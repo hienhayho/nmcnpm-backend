@@ -9,16 +9,11 @@ export class BillService {
     @InjectRepository(Bill) private readonly billService: Repository<Bill>
   ) {} 
     
-  async getAllBill() {
+  async getAllBills() {
     return await this.billService.find({
       relations: {
         user: true
       }
     })
   }
-
-  async getAllPriceFromBills() {
-    
-  }
-
 }

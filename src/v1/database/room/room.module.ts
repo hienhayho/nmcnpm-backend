@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { RoomServices } from './room.service';
 import { RoomController } from './room.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { RoomTypeService } from '../room_type/room_type.service';
 import { RoomType } from '../room_type/entities/room_type.entity';
 import { RoomTypeController } from '../room_type/room_type.controller';

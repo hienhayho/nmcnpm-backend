@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
 import { User } from '../database/user/entities/user.entity';
 import { UserService } from '../database/user/user.service';
@@ -11,7 +10,6 @@ import { Service } from '../database/services/entities/service.entity';
 import { ServicesService } from '../database/services/services.service';
 import { RoomType } from '../database/room_type/entities/room_type.entity';
 import { RoomTypeService } from '../database/room_type/room_type.service';
-import { RoomServiceService } from '../database/room-service/room-service.service';
 import { RoomService } from '../database/room-service/entities/room-service.entity';
 import { Bill } from '../database/bill/entities/bill.entity';
 import { BillService } from '../database/bill/bill.service';
@@ -40,12 +38,10 @@ import { ServicesUsed } from '../database/services_used/entities/services_used.e
   ],
   controllers: [AdminController],
   providers: [
-    AdminService,
     UserService,
     ServicesService,
     RoomServices,
     RoomTypeService,
-    RoomServiceService,
     RoomDetailService,
     BillService,
     JwtService

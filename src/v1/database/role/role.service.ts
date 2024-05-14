@@ -1,9 +1,9 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { Role } from './entities/role.entity';
 import { Repository } from 'typeorm';
-import { UpdateRole } from './dto/update-role.dto';
+import { CreateRoleDto } from './dto/role.create.dto';
+import { UpdateRole } from './dto/role.update.dto';
+import { Role } from './entities/role.entity';
 @Injectable()
 export class RoleService {
   constructor(

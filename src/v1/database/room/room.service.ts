@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateRoomDto } from './dto/create-room.dto';
-import { Room } from './entities/room.entity';
-import { RoomTypeService } from '../room_type/room_type.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository, In, LessThan, MoreThan } from 'typeorm';
+import { Room } from './entities/room.entity';
 import { RoomDetail } from '../room_detail/entities/room_detail.entity';
-import { UpdateRoomDto } from '../../admin/dto/room.update.dto';
 import { ServicesUsed } from '../services_used/entities/services_used.entity';
+import { CreateRoomDto } from './dto/room.create.dto';
+import { UpdateRoomDto } from '../../admin/dto/room.update.dto';
+import { RoomTypeService } from '../room_type/room_type.service';
 
 @Injectable()
 export class RoomServices {
@@ -16,7 +16,7 @@ export class RoomServices {
     @InjectRepository(ServicesUsed) private readonly servicedUsed: Repository<ServicesUsed>,
     private roomTypeService: RoomTypeService
   ) { }
-  async CreateNewRoom(roomInfo: CreateRoomDto) {
+  async createNewRoom(roomInfo: CreateRoomDto) {
     const roomType = await this.roomTypeService.getRoomTypeWithItsServices(roomInfo.roomTypeId)
     const checkRoomNumber = await this.roomService.findOne({
       where: {
@@ -38,7 +38,7 @@ export class RoomServices {
     return result
   }
 
-  async GetRoomByRoomNumber(roomNumber :number){
+  async getRoomByRoomNumber(roomNumber: number){
     const room = await this.roomService.findOne({
       where: {
         roomNumber: roomNumber
@@ -53,7 +53,7 @@ export class RoomServices {
     return room
   }
 
-  async GetAllRoom(){
+  async getAllRoom(){
     const result = await this.roomService.find({
       relations: {
         roomType: true
@@ -62,7 +62,7 @@ export class RoomServices {
     return result;
   }
 
-  async GetAllRoomNotBooked() {
+  async getAllRoomNotBooked() {
     const roomIdBooked = await this.roomDetailService.find({
       select: {
         id: true
@@ -137,13 +137,13 @@ export class RoomServices {
       }
     })
 
-    const IdroomDetailByRoomIdAfterNow = roomDetailByRoomIdAfterNow.map((roomDetail)=>{
+    const idroomDetailByRoomIdAfterNow = roomDetailByRoomIdAfterNow.map((roomDetail)=>{
       return roomDetail.id
     })
 
     await this.servicedUsed.delete({
       roomDetail: {
-        id: In(IdroomDetailByRoomIdAfterNow)
+        id: In(idroomDetailByRoomIdAfterNow)
       }
     })
 
@@ -158,5 +158,4 @@ export class RoomServices {
 
     return result
   }
-
 }

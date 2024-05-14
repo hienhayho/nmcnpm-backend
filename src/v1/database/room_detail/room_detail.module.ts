@@ -1,25 +1,22 @@
 import { Module } from '@nestjs/common';
-import { RoomDetailService } from './room_detail.service';
-import { RoomDetailController } from './room_detail.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RoomDetail } from './entities/room_detail.entity';
-import { RoomService } from '../room-service/entities/room-service.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RoomDetailService } from './room_detail.service';
 import { ServicesService } from '../services/services.service';
+import { RoomDetailController } from './room_detail.controller';
 import { ServicesController } from '../services/services.controller';
+import { RoomDetail } from './entities/room_detail.entity';
 import { Service } from '../services/entities/service.entity';
-import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
 import { Role } from '../role/entities/role.entity';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Bill } from '../bill/entities/bill.entity';
 import { ServicesUsed } from '../services_used/entities/services_used.entity';
-import { RoomType } from '../room_type/entities/room_type.entity';
 import { Room } from '../room/entities/room.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RoomDetail,Service,User, Role,Bill,ServicesUsed,Room]),
+    TypeOrmModule.forFeature([RoomDetail, Service, User, Role, Bill, ServicesUsed, Room]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -30,7 +27,7 @@ import { Room } from '../room/entities/room.entity';
       })
   })
   ],
-  controllers: [RoomDetailController,ServicesController],
-  providers: [RoomDetailService,ServicesService]
+  controllers: [RoomDetailController, ServicesController],
+  providers: [RoomDetailService, ServicesService]
 })
 export class RoomDetailModule {}

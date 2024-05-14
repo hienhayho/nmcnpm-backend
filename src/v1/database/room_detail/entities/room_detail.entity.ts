@@ -1,4 +1,4 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CreateDateColumn, UpdateDateColumn } from "typeorm";
 import * as moment from 'moment-timezone';
 import { User } from "../../user/entities/user.entity";

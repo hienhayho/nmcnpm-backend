@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDateString, IsNotEmpty, IsNumber, IsString, Max, Min } from "class-validator";
-import { CreateDateColumn } from "typeorm";
+import { IsDateString, IsNotEmpty, Max, Min } from "class-validator";
 
 class ServiceUsedDTO {
     @ApiProperty({

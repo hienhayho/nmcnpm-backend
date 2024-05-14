@@ -1,20 +1,20 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Req, HttpStatus } from '@nestjs/common';
 import { AdminAuth } from '@/middleware/authenticate';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { UserService } from '../database/user/user.service';
 import { Request } from 'express';
 import { AddNewServiceDto } from './dto/service.addNewService.dto';
-import { ServicesService } from '../database/services/services.service';
 import { DeleteServiceDto } from './dto/service.delete.dto';
 import { UpdateServiceDto } from './dto/service.update.dto';
 import { AddNewRoomTypeDto } from './dto/roomType.addNewRoomType.dto';
-import { RoomTypeService } from '../database/room_type/room_type.service';
-import { BillService } from '../database/bill/bill.service';
 import { UpdateRoomTypeDto } from './dto/roomType.update.dto';
 import { DeleteRoomTypeDto } from './dto/roomType.delete.dto';
-import { RoomServices } from '../database/room/room.service';
-import { CreateRoomDto } from '../database/room/dto/create-room.dto';
 import { UpdateRoomDto } from './dto/room.update.dto';
+import { UserService } from '../database/user/user.service';
+import { ServicesService } from '../database/services/services.service';
+import { RoomTypeService } from '../database/room_type/room_type.service';
+import { BillService } from '../database/bill/bill.service';
+import { RoomServices } from '../database/room/room.service';
+import { CreateRoomDto } from '../database/room/dto/room.create.dto';
 import { RoomDetailService } from '../database/room_detail/room_detail.service';
 import { AddNewUserDto } from '../database/user/dto/user.addNewUser.dto';
 
@@ -73,9 +73,9 @@ export class AdminController {
     }
   }
 
-  @ApiOperation({ summary: "Delete a service." })
+  @ApiOperation({ summary: "Delete a service by service Id." })
   @Delete("service")
-  async deleteService(@Body() serviceId: DeleteServiceDto) {
+  async deleteServiceById(@Body() serviceId: DeleteServiceDto) {
     try {
       const result = await this.servicesService.deleteServiceById(serviceId.serviceId)
       return {
@@ -85,7 +85,7 @@ export class AdminController {
         data: result
       }
     } catch (err) {
-      console.error("admin.controller.ts deleteService: ", err)
+      console.error("admin.controller.ts deleteServiceById: ", err)
       return {
         status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
         error: 1,
@@ -102,7 +102,7 @@ export class AdminController {
       return {
         status: HttpStatus.OK,
         error: 0,
-        message: "create room type successfully.",
+        message: "Create room type successfully.",
         data: result
       }
     } catch (err) {
@@ -123,7 +123,7 @@ export class AdminController {
       return {
         status: HttpStatus.OK,
         error: 0,
-        message: "create room type successfully.",
+        message: "Update room type successfully.",
         data: result
       }
     } catch (err) {
@@ -151,7 +151,7 @@ export class AdminController {
         data: result
       }
     } catch (err) {
-      console.error("admin.controller.ts updateRoomType: ", err)
+      console.error("admin.controller.ts deleteRoomType: ", err)
       return {
         status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
         error: 1,
@@ -162,21 +162,21 @@ export class AdminController {
 
   @ApiOperation({ summary: "Create new room" })
   @Post("room")
-  async CreateNewRoom(@Body() roomInfo: CreateRoomDto) {
+  async createNewRoom(@Body() roomInfo: CreateRoomDto) {
     try {
-      const result = await this.roomService.CreateNewRoom(roomInfo)
+      const result = await this.roomService.createNewRoom(roomInfo)
       return {
         status: HttpStatus.CREATED,
         error: 0,
-        message: "Create room successfully.",
+        message: "Create new room successfully.",
         data: result
       }
     } catch (err) {
-      console.error("room.controller.ts CreateNewRoom: ", err)
+      console.error("admin.controller.ts createNewRoom: ", err)
       return {
         status: err.status,
         error: 1,
-        message: err.response.message || err.message
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
   }
@@ -193,36 +193,11 @@ export class AdminController {
       return {
         status: HttpStatus.OK,
         error: 0,
-        message: "Update room type successfully.",
+        message: "Update room successfully.",
         data: result
       }
     } catch (err) {
-      console.error("admin.controller.ts updateRoomType: ", err)
-      return {
-        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
-        error: 1,
-        message: err.response.message ?? err.message ?? "Internal Server Error!"
-      }
-    }
-  }
-
-  @ApiOperation({ summary: "Update room info: change room number or change type of room." })
-  @Patch("room/:roomId")
-  async updateRoo(@Param("roomId") roomId: number, @Body() roomData: UpdateRoomDto) {
-    try {
-      const data: UpdateRoomDto = {
-        ...roomData,
-        roomId
-      }
-      const result = await this.roomService.updateRoom(data)
-      return {
-        status: HttpStatus.OK,
-        error: 0,
-        message: "Update room type successfully.",
-        data: result
-      }
-    } catch (err) {
-      console.error("admin.controller.ts updateRoomType: ", err)
+      console.error("admin.controller.ts updateRoom: ", err)
       return {
         status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
         error: 1,
@@ -269,7 +244,7 @@ export class AdminController {
       return {
         status: err.status,
         error: 1,
-        message: err.response.message
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
   }
@@ -292,20 +267,20 @@ export class AdminController {
         }
       }
     } catch (err) {
-      console.error("user.controller.ts addNewUser: ", err)
+      console.error("admin.controller.ts addNewUser: ", err)
       return {
         status: err.status,
         error: 1,
-        message: err.response.message || err.message
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
   }
 
   @ApiOperation({ summary: "Get all bill" })
   @Get("bill")
-  async getAllBill() {
+  async getAllBills() {
     try {
-      const result = await this.billService.getAllBill()
+      const result = await this.billService.getAllBills()
       return {
         status: HttpStatus.OK,
         error: 0,
@@ -313,7 +288,7 @@ export class AdminController {
         data: result
       }
     } catch (err) {
-      console.error("admin.controller.ts getAllBill: ", err)
+      console.error("admin.controller.ts getAllBills: ", err)
       return {
         status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
         error: 1,
@@ -334,16 +309,16 @@ export class AdminController {
         data: allUser
       }
     } catch (err) {
-      console.error("user.controller.ts getAllUser: ", err.message);
+      console.error("admin.controller.ts getAllUser: ", err.message);
       return {
         status: err.status,
         error: 1,
-        message: err.response.message
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
   }
 
-  @ApiOperation({ summary: "delete room" })
+  @ApiOperation({ summary: "Delete room by Id." })
   @Delete("room/:id")
   async deleteRommById(@Param("id") id: string ) {
       try {
@@ -356,11 +331,11 @@ export class AdminController {
             data: result
           }
       } catch (err) {
-          console.error("room.controller.ts deleteRommById: ", err)
+          console.error("admin.controller.ts deleteRommById: ", err)
           return {
               status: err.status,
               error: 1,
-              message: err.response.message || err.message
+              message: err.response.message ?? err.message ?? "Internal Server Error!"
           }
       }
   }

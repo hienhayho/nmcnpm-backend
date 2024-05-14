@@ -1,20 +1,22 @@
-import { Controller, Get, Post, HttpStatus, Body, Query, Param, Patch, UseGuards, UseInterceptors, UploadedFile, Res, Req, StreamableFile } from '@nestjs/common';
-import { RoomTypeService } from './room_type.service';
+import { Controller, Get, Post, HttpStatus, Body, Param, UseGuards, UseInterceptors, UploadedFile, Res, StreamableFile } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AddNewRoomTypeDto } from '../../admin/dto/roomType.addNewRoomType.dto';
-import { AuthGuard } from '@/middleware/authenticate';
-import { diskStorage } from 'multer';
-import { getImagesById, getImagesFolder } from '@/utils';
-import { RoomTypeImageDto } from './dto/room_type.upload.image.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import { diskStorage } from 'multer';
 import { createReadStream } from 'fs';
+import { AuthGuard } from '@/middleware/authenticate';
+import { getImagesById, getImagesFolder } from '@/utils';
+import { RoomTypeService } from './room_type.service';
+import { RoomTypeImageDto } from './dto/room_type.upload.image.dto';
 
 @Controller('v1/room_type')
 @ApiTags("room_type")
 @UseGuards(new AuthGuard())
 export class RoomTypeController {
-  constructor(private readonly roomTypeService: RoomTypeService) { }
+  constructor(
+    private readonly roomTypeService: RoomTypeService
+  ) { }
+
   @ApiOperation({ summary: "Get all room type." })
   @Get()
   async getAllRoomType() {
@@ -49,7 +51,7 @@ export class RoomTypeController {
         data: result
       }
     } catch (err) {
-      console.error("room_type.controller.ts getAllRoomType: ", err)
+      console.error("room_type.controller.ts getRoomTypeWithItsServices: ", err)
       return {
         status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
         error: 1,

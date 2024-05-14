@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsPassportNumber, IsString, IsStrongPassword, Max, Min } from "class-validator";
+import { IsString } from "class-validator";
 
 
 export class UserLogin {

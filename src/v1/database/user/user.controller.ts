@@ -1,14 +1,14 @@
 import { Body, Controller, Get, HttpStatus, Param, Patch, Post, Query, Req, Res, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { UserService } from './user.service';
-import { UserUpdate } from './dto/user.update.dto';
-import { AuthGuard } from '@/middleware/authenticate';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { UpdateImageDto } from './dto/user.update.image.dto';
+import { AuthGuard } from '@/middleware/authenticate';
 import { Response, Request } from 'express'
 import { createReadStream } from 'fs';
 import { getImagesById, getImagesFolder } from '@/utils';
+import { UserService } from './user.service';
+import { UserUpdate } from './dto/user.update.dto';
+import { diskStorage } from 'multer';
+import { UpdateImageDto } from './dto/user.update.image.dto';
 
 @Controller('v1/user')
 @ApiTags('user')
@@ -27,11 +27,11 @@ export class UserController {
             return {
                 status: HttpStatus.OK,
                 error: 0,
-                message: "Get all users successfully !",
+                message: "Get all bills successfully !",
                 data: allUser
             }
         } catch (err) {
-            console.error("user.controller.ts getAllUser: ", err.message);
+            console.error("user.controller.ts getAllBills: ", err.message);
             return {
                 status: err.status,
                 error: 1,
@@ -50,11 +50,11 @@ export class UserController {
             return {
                 status: HttpStatus.OK,
                 error: 0,
-                message: "Get all users successfully !",
+                message: "Pay bill successfully !",
                 data: result
             }
         } catch (err) {
-            console.error("user.controller.ts getAllUser: ", err.message);
+            console.error("user.controller.ts payBill: ", err.message);
             return {
                 status: err.status,
                 error: 1,
@@ -169,7 +169,7 @@ export class UserController {
             const file = createReadStream(imageLocation);
             return new StreamableFile(file);
         } catch (err) {
-            console.error("user.controller.ts uploadUserAvatar: ", err)
+            console.error("user.controller.ts getUserAvatarById: ", err)
         }
     }
 }

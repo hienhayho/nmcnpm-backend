@@ -1,13 +1,13 @@
 import { Controller, Get, Post, Body, HttpStatus, Patch, Delete, Param, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { RoleService } from './role.service';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRole } from './dto/update-role.dto';
 import { AuthGuard } from '@/middleware/authenticate';
+import { CreateRoleDto } from './dto/role.create.dto';
+import { UpdateRole } from './dto/role.update.dto';
+import { RoleService } from './role.service';
 
 @Controller('v1/role')
 @ApiTags('role')
-// @UseGuards(new AuthGuard())
+@UseGuards(new AuthGuard())
 export class RoleController {
   constructor(private readonly roleService: RoleService) { }
 
@@ -25,11 +25,11 @@ export class RoleController {
         }
       }
     } catch (err) {
-      console.error("role.controller.ts - getAllRole: ", err)
+      console.error("role.controller.ts getAllRole: ", err)
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         error: 1,
-        message: err.message
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
   }
@@ -48,11 +48,11 @@ export class RoleController {
         }
       }
     } catch (err) {
-      console.error("role.controller.ts - createRole: ", err)
+      console.error("role.controller.ts createRole: ", err)
       return {
         status: err.status,
         error: 1,
-        message: err.response.message
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
   }
@@ -74,7 +74,7 @@ export class RoleController {
       return {
         status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
         error: 1,
-        message: err.response.message ?? "Internal Server Error."
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
   }
@@ -93,11 +93,11 @@ export class RoleController {
         }
       }
     } catch (err) {
-      console.error("role.controller.ts - updateRole: ", err)
+      console.error("role.controller.ts updateRole: ", err)
       return {
         status: err.status,
         error: 1,
-        message: err.response.message
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
   }
@@ -116,11 +116,11 @@ export class RoleController {
         }
       }
     } catch (err) {
-      console.error("role.controller.ts - deleteRole: ", err)
+      console.error("role.controller.ts deleteRole: ", err)
       return {
         status: err.status,
         error: 1,
-        message: err.response.message
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
   }

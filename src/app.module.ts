@@ -9,7 +9,6 @@ import { RoomTypeModule } from './v1/database/room_type/room_type.module';
 import { ServicesModule } from './v1/database/services/services.module';
 import { AdminModule } from './v1/admin/admin.module';
 import { RoomDetailModule } from './v1/database/room_detail/room_detail.module';
-import { Room } from './v1/database/room/entities/room.entity';
 import { RoomModule } from './v1/database/room/room.module';
 
 @Module({

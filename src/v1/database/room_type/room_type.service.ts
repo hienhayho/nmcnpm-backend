@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RoomType } from './entities/room_type.entity';
 import { Repository } from 'typeorm';
-import { AddNewRoomTypeDto } from '../../admin/dto/roomType.addNewRoomType.dto';
 import { ServicesService } from "../services/services.service"
 import { RoomService } from '../room-service/entities/room-service.entity';
+import { RoomType } from './entities/room_type.entity';
+import { AddNewRoomTypeDto } from '../../admin/dto/roomType.addNewRoomType.dto';
 import { UpdateRoomTypeDto } from '@/v1/admin/dto/roomType.update.dto';
 import { DeleteRoomTypeDto } from '@/v1/admin/dto/roomType.delete.dto';
 

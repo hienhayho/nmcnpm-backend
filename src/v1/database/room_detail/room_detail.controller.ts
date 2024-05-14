@@ -1,17 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpStatus, Req } from '@nestjs/common';
-import { RoomDetailService } from './room_detail.service';
-import { CreateRoomDetailDto } from './dto/create-room_detail.dto';
-import { AuthGuard } from '@/middleware/authenticate';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, HttpStatus, Req } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from "express"
+import { AuthGuard } from '@/middleware/authenticate';
+import { CreateRoomDetailDto } from './dto/room_detail.create.dto';
+import { RoomDetailService } from './room_detail.service';
 
 @Controller('v1/room_detail')
 @ApiTags("room detail")
 @UseGuards(new AuthGuard())
 export class RoomDetailController {
-  constructor(private readonly roomDetailService: RoomDetailService) {}
+    constructor(
+        private readonly roomDetailService: RoomDetailService
+    ) {}
 
-    @ApiOperation({summary: "Get room booked by userId"})
+    @ApiOperation({summary: "Get room detail booked by userId"})
     @Get()
     async getRoomDetailBooked(@Req() request: Request) {
         try {
@@ -20,7 +22,7 @@ export class RoomDetailController {
             return {
                 status: HttpStatus.OK,
                 error: 0,
-                message: "Create room successfully",
+                message: "Get room detail booked successfully.",
                 data: result
             }
         } catch (err) {
@@ -42,7 +44,7 @@ export class RoomDetailController {
             return {
                 status: HttpStatus.OK,
                 error: 0,
-                message: "get room detail successfully",
+                message: "Get room detail successfully",
                 data: result
             }
         } catch (err) {
@@ -56,7 +58,7 @@ export class RoomDetailController {
     }
 
     @Post("create")
-    async createRoomDetail(@Body() roomDetailReq: CreateRoomDetailDto,@Req() request: Request) {
+    async createRoomDetail(@Body() roomDetailReq: CreateRoomDetailDto, @Req() request: Request) {
         try {
             const cookies = request.cookies
             const result = await this.roomDetailService.createRoomDetail(cookies,roomDetailReq);
@@ -85,7 +87,7 @@ export class RoomDetailController {
             return {
                 status: HttpStatus.OK,
                 error: 0,
-                message: "delete room detail successfully",
+                message: "Delete room detail successfully",
                 data: result
             }
         } catch (err) {

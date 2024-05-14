@@ -1,7 +1,7 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { User } from "../../user/entities/user.entity";
 import * as moment from "moment-timezone";
+import { User } from "../../user/entities/user.entity";
 import { RoomDetail } from "../../room_detail/entities/room_detail.entity";
 @Entity()
 export class Bill {
