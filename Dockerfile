@@ -1,21 +1,22 @@
-FROM ubuntu:latest
+# Base image
+FROM node:18-alpine
 
-COPY ./ /app
+# Create app directory
+WORKDIR /usr/src/app
 
-USER root
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+COPY package*.json ./
 
-RUN apt-get update && apt-get install curl -y \
-    && apt-get install -y nodejs \
-    && apt-get install -y npm \
-    && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
-    && exec bash \
-    && . ~/.bashrc \
-    && nvm install v18.17.0 \
-    && nvm use 18.17.0 \
-    && npm install -g npm
+# Install app dependencies
+RUN npm install
 
-WORKDIR /app
+# Bundle app source
+COPY . .
 
-RUN npm i
+# Creates a "dist" folder with the production build
+RUN npm run build
 
-CMD [ "npm", "run", "dev" ]
+EXPOSE 3000
+
+# Start the server using the production build
+CMD [ "node", "dist/main.js" ]
