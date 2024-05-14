@@ -1,8 +1,14 @@
-import { Controller, Get, Post, HttpStatus, Body, Query, Param, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, HttpStatus, Body, Query, Param, Patch, UseGuards, UseInterceptors, UploadedFile, Res, Req, StreamableFile } from '@nestjs/common';
 import { RoomTypeService } from './room_type.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AddNewRoomTypeDto } from '../../admin/dto/roomType.addNewRoomType.dto';
 import { AuthGuard } from '@/middleware/authenticate';
+import { diskStorage } from 'multer';
+import { getImagesById, getImagesFolder } from '@/utils';
+import { RoomTypeImageDto } from './dto/room_type.upload.image.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
+import { createReadStream } from 'fs';
 
 @Controller('v1/room_type')
 @ApiTags("room_type")
@@ -50,5 +56,49 @@ export class RoomTypeController {
         message: err.response.message ?? err.message ?? "Internal Server Error!"
       }
     }
+  }
+
+  @ApiOperation({ summary: "Upload image for room type" })
+  @Post('room_type/upload')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file', {
+      storage: diskStorage({
+          destination: getImagesFolder()
+      })
+  }))
+  async uploadRoomTypeImage(@Body() data: RoomTypeImageDto, @UploadedFile() file: Express.Multer.File) {
+      try {
+          const {roomTypeId} = data
+          const result = await this.roomTypeService.uploadRoomTypeImage(file.filename,roomTypeId)
+          return {
+              status: HttpStatus.OK,
+              error: 0,
+              message: "Upload room type image successfully",
+          }
+      } catch (err) {
+          console.error("room_type.controller.ts uploadRoomTypeImage: ", err)
+          return {
+              status: err.status,
+              error: 1,
+              message: err.response.message
+          }
+      }
+  }
+
+  @Post('room_type_image/:id')
+  async getRoomTypeImage(
+      @Res({ passthrough: true }) res: Response,
+      @Param("id") id: string
+  ): Promise<StreamableFile> {
+      try {
+          const roomTypeId = parseInt(id)
+          const imageId = await this.roomTypeService.getRoomTypeImage(roomTypeId)
+          res.set({ 'Content-Type': 'image/jpg' });
+          const imageLocation = getImagesById(imageId)
+          const file = createReadStream(imageLocation);
+          return new StreamableFile(file);
+      } catch (err) {
+          console.error("room_type.controller.ts getRoomTypeImage: ", err)
+      }
   }
 }

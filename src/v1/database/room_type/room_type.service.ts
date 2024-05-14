@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoomType } from './entities/room_type.entity';
 import { Repository } from 'typeorm';
@@ -133,4 +133,28 @@ export class RoomTypeService {
     })
     return result
   }
+
+  async uploadRoomTypeImage(fileId: string, roomTypeId: number) {
+      const roomType = await this.getRoomTypeById(roomTypeId)
+
+      if (!roomType){
+        throw new NotFoundException({ message: `room type id = ${roomType.id} not found in database.` })
+      }
+
+      roomType.roomImage = fileId
+
+      return await this.roomTypeService.save(roomType)
+  }
+
+  async getRoomTypeImage(roomTypeId: number) {
+    const roomType = await this.getRoomTypeById(roomTypeId)
+    
+    if (!roomType || !roomType.roomImage){
+      // Hình default
+      return "roomTypeNotFound.png"
+    }
+
+    return roomType.roomImage
+  }
+  
 }

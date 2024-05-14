@@ -5,7 +5,7 @@ export const getImagesFolder = () => {
 }
 
 export const getImagesById = (id: string) => {
-    if (id === "female.png" || id === "male.png"){
+    if (id === "female.png" || id === "male.png" || id === "roomTypeNotFound.png"){
         return `${process.cwd()}/default/${id}`
     }
     return `${process.cwd()}/images/${id}`
