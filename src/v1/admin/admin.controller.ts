@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Req, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Req, HttpStatus, Res, StreamableFile } from '@nestjs/common';
 import { AdminAuth } from '@/middleware/authenticate';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AddNewServiceDto } from './dto/service.addNewService.dto';
 import { DeleteServiceDto } from './dto/service.delete.dto';
 import { UpdateServiceDto } from './dto/service.update.dto';
@@ -17,6 +17,8 @@ import { RoomServices } from '../database/room/room.service';
 import { CreateRoomDto } from '../database/room/dto/room.create.dto';
 import { RoomDetailService } from '../database/room_detail/room_detail.service';
 import { AddNewUserDto } from '../database/user/dto/user.addNewUser.dto';
+import { getImagesById } from '@/utils';
+import { createReadStream } from 'fs';
 
 @Controller('v1/admin')
 @ApiTags("admin")
@@ -276,27 +278,6 @@ export class AdminController {
     }
   }
 
-  @ApiOperation({ summary: "Get all bill" })
-  @Get("bill")
-  async getAllBills() {
-    try {
-      const result = await this.billService.getAllBills()
-      return {
-        status: HttpStatus.OK,
-        error: 0,
-        message: "Get all bill successfully.",
-        data: result
-      }
-    } catch (err) {
-      console.error("admin.controller.ts getAllBills: ", err)
-      return {
-        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
-        error: 1,
-        message: err.response.message ?? err.message ?? "Internal Server Error!"
-      }
-    }
-  }
-
   @ApiOperation({ summary: "Get all users from database." })
   @Get("user")
   async getAllUser() {
@@ -318,25 +299,64 @@ export class AdminController {
     }
   }
 
+  @ApiOperation({summary: "Get user avatar with avatar id."})
+  @Post('user/user_avatar/:id')
+  async getUserAvatarById(
+    @Res({ passthrough: true }) res: Response,
+    @Param("id") id: string
+  ): Promise<StreamableFile> {
+    try {
+      res.set({ 'Content-Type': 'image/jpg' });
+      const imageLocation = getImagesById(id)
+      const file = createReadStream(imageLocation);
+      return new StreamableFile(file);
+    } catch (err) {
+      console.error("user.controller.ts getUserAvatarById: ", err)
+    }
+  }
+
+  @ApiOperation({ summary: "Get all bill" })
+  @Get("bill")
+  async getAllBills() {
+    try {
+      const result = await this.billService.getAllBills()
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Get all bill successfully.",
+        data: result
+      }
+    } catch (err) {
+      console.error("admin.controller.ts getAllBills: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
+  }
+
+
+
   @ApiOperation({ summary: "Delete room by Id." })
   @Delete("room/:id")
-  async deleteRommById(@Param("id") id: string ) {
-      try {
-          const roomId = parseInt(id)
-          const result = await this.roomService.deleteRommById(roomId)
-          return {
-            status: HttpStatus.OK,
-            error: 0,
-            message: "Delete room successfully.",
-            data: result
-          }
-      } catch (err) {
-          console.error("admin.controller.ts deleteRommById: ", err)
-          return {
-              status: err.status,
-              error: 1,
-              message: err.response.message ?? err.message ?? "Internal Server Error!"
-          }
+  async deleteRommById(@Param("id") id: string) {
+    try {
+      const roomId = parseInt(id)
+      const result = await this.roomService.deleteRommById(roomId)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Delete room successfully.",
+        data: result
       }
+    } catch (err) {
+      console.error("admin.controller.ts deleteRommById: ", err)
+      return {
+        status: err.status,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
   }
 }
