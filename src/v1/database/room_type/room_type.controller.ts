@@ -8,6 +8,8 @@ import { AuthGuard } from '@/middleware/authenticate';
 import { getImagesById, getImagesFolder } from '@/utils';
 import { RoomTypeService } from './room_type.service';
 import { RoomTypeImageDto } from './dto/room_type.upload.image.dto';
+import { v4 as uuidv4} from "uuid"
+const path = require('path')
 
 @Controller('v1/room_type')
 @ApiTags("room_type")
@@ -65,13 +67,19 @@ export class RoomTypeController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file', {
       storage: diskStorage({
-          destination: getImagesFolder()
+          destination: getImagesFolder(),
+          filename: (req,file,cb) => {
+            const fileName: string = path.parse(file.originalname).name.replace(/\s/g,'') + uuidv4();
+            const extension: string = path.parse(file.originalname).ext;
+
+            cb(null,`${fileName}${extension}`)
+          }
       })
   }))
   async uploadRoomTypeImage(@Body() data: RoomTypeImageDto, @UploadedFile() file: Express.Multer.File) {
       try {
           const {roomTypeId} = data
-          const result = await this.roomTypeService.uploadRoomTypeImage(file.filename,roomTypeId)
+          const result = await this.roomTypeService.uploadRoomTypeImage(file,roomTypeId)
           return {
               status: HttpStatus.OK,
               error: 0,
@@ -89,18 +97,24 @@ export class RoomTypeController {
 
   @Post('room_type_image/:id')
   async getRoomTypeImage(
-      @Res({ passthrough: true }) res: Response,
       @Param("id") id: string
-  ): Promise<StreamableFile> {
+  ){
       try {
           const roomTypeId = parseInt(id)
-          const imageId = await this.roomTypeService.getRoomTypeImage(roomTypeId)
-          res.set({ 'Content-Type': 'image/jpg' });
-          const imageLocation = getImagesById(imageId)
-          const file = createReadStream(imageLocation);
-          return new StreamableFile(file);
+          const imagePath = await this.roomTypeService.getRoomTypeImage(roomTypeId)
+          return {
+            status: HttpStatus.OK,
+            error: 0,
+            message: "Get room type image successfully",
+            result: imagePath,
+        }
       } catch (err) {
-          console.error("room_type.controller.ts getRoomTypeImage: ", err)
+        console.error("room_type.controller.ts getRoomTypeImage: ", err)
+        return {
+            status: err.status,
+            error: 1,
+            message: err.response.message
+        }
       }
   }
 }

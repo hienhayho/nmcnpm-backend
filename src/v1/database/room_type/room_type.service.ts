@@ -134,14 +134,14 @@ export class RoomTypeService {
     return result
   }
 
-  async uploadRoomTypeImage(fileId: string, roomTypeId: number) {
+  async uploadRoomTypeImage(file: Express.Multer.File, roomTypeId: number) {
       const roomType = await this.getRoomTypeById(roomTypeId)
 
       if (!roomType){
         throw new NotFoundException({ message: `room type id = ${roomType.id} not found in database.` })
       }
 
-      roomType.roomImage = fileId
+      roomType.roomImage = `images/${file.filename}`
 
       return await this.roomTypeService.save(roomType)
   }
@@ -151,7 +151,7 @@ export class RoomTypeService {
     
     if (!roomType || !roomType.roomImage){
       // Hình default
-      return "roomTypeNotFound.png"
+      return "default/roomTypeNotFound.png"
     }
 
     return roomType.roomImage

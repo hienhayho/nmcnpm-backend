@@ -216,7 +216,7 @@ export class UserService {
     })
   }
 
-  async uploadUserAvatar(fileId: string, cookies: Record<string, any>) {
+  async uploadUserAvatar(file: Express.Multer.File, cookies: Record<string, any>) {
     try {
       // get access_token from cookies
       const token = cookies["access_token"]
@@ -244,7 +244,7 @@ export class UserService {
       if (!user) {
         throw new NotFoundException({ message: "User not found in database." })
       }
-      user.avatar = fileId
+      user.avatar = `static/${file.filename}`
       return await this.userService.update({ id: userId }, user)
 
 
@@ -255,7 +255,6 @@ export class UserService {
   }
 
   async getUserAvatarById(cookies: Record<string, any>) {
-    try {
       // get access_token from cookies
       const userId = await this.getUserIdFromCookies(cookies);
       const user = await this.userService.findOne(
@@ -269,16 +268,12 @@ export class UserService {
 
       if (user.avatar == null) {
         if (user.gender == 1) {
-          return "male.png"
+          return "default/male.png"
         } else {
-          return "female.png"
+          return "default/female.png"
         }
       }
 
       return user.avatar
-    } catch (err) {
-      console.error("user.sevice.ts getUserAvatarById: ", err.message)
-      throw new InternalServerErrorException({ message: "Something went wrong! Please try again later." })
-    }
   }
 }

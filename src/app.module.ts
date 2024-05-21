@@ -10,12 +10,28 @@ import { ServicesModule } from './v1/database/services/services.module';
 import { AdminModule } from './v1/admin/admin.module';
 import { RoomDetailModule } from './v1/database/room_detail/room_detail.module';
 import { RoomModule } from './v1/database/room/room.module';
+import { ServeStaticModule, ServeStaticModuleOptions } from '@nestjs/serve-static';
+import { join } from 'path';
+
+const staticOption :ServeStaticModuleOptions[] = [
+  {
+    rootPath: join(__dirname, '../', 'images'),
+    serveRoot: "/static"
+  },
+  {
+    rootPath: join(__dirname, '../', 'default'),
+    serveRoot: "/default"
+  }
+]
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule,
+        ServeStaticModule.forRoot(...staticOption),
+      ],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',

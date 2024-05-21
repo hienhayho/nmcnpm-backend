@@ -9,6 +9,8 @@ import { UserService } from './user.service';
 import { UserUpdate } from './dto/user.update.dto';
 import { diskStorage } from 'multer';
 import { UpdateImageDto } from './dto/user.update.image.dto';
+import { v4 as uuidv4} from "uuid"
+const path = require('path')
 
 @Controller('v1/user')
 @ApiTags('user')
@@ -134,13 +136,19 @@ export class UserController {
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
-            destination: getImagesFolder()
+            destination: getImagesFolder(),
+            filename: (req,file,cb) => {
+              const fileName: string = path.parse(file.originalname).name.replace(/\s/g,'') + uuidv4();
+              const extension: string = path.parse(file.originalname).ext;
+  
+              cb(null,`${fileName}${extension}`)
+            }
         })
     }))
     async uploadUserAvatar(@Body() data: UpdateImageDto, @UploadedFile() file: Express.Multer.File, @Req() request: Request) {
         const cookies = request.cookies;
         try {
-            const result = await this.userService.uploadUserAvatar(file.filename, cookies)
+            const result = await this.userService.uploadUserAvatar(file, cookies)
             return {
                 status: HttpStatus.OK,
                 error: 0,
@@ -158,18 +166,24 @@ export class UserController {
 
     @Get('user_avatar')
     async getUserAvatarById(
-        @Res({ passthrough: true }) res: Response,
         @Req() request: Request
-    ): Promise<StreamableFile> {
+    ){
         const cookies = request.cookies;
         try {
-            const imageId = await this.userService.getUserAvatarById(cookies)
-            res.set({ 'Content-Type': 'image/jpg' });
-            const imageLocation = getImagesById(imageId)
-            const file = createReadStream(imageLocation);
-            return new StreamableFile(file);
+            const imagePath = await this.userService.getUserAvatarById(cookies)
+            return {
+                status: HttpStatus.OK,
+                error: 0,
+                message: "Get user image successfully",
+                result: imagePath,
+            }
         } catch (err) {
             console.error("user.controller.ts getUserAvatarById: ", err)
+            return {
+                status: err.status,
+                error: 1,
+                message: err.response.message
+            }
         }
     }
 }
