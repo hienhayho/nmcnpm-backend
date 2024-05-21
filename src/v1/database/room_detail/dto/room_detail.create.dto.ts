@@ -1,27 +1,27 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsDateString, IsNotEmpty, Max, Min } from "class-validator";
 
-class ServiceUsedDTO {
-    @ApiProperty({
-        type: Number
-    })
-    id: number;
-  
-    @ApiProperty({
-        type: String
-    })
-    name: string;
+// class ServiceUsedDTO {
+//     @ApiProperty({
+//         type: Number
+//     })
+//     id: number;
 
-    @ApiProperty({
-        type: Number
-    })
-    price: number;
+//     @ApiProperty({
+//         type: String
+//     })
+//     name: string;
 
-    @ApiProperty({
-        type: Number
-    })
-    quantity: number;
-  }
+//     @ApiProperty({
+//         type: Number
+//     })
+//     price: number;
+
+//     @ApiProperty({
+//         type: Number
+//     })
+//     quantity: number;
+// }
 
 export class CreateRoomDetailDto {
     @ApiProperty({
@@ -55,6 +55,6 @@ export class CreateRoomDetailDto {
     })
     checkOut: Date;
 
-    @ApiProperty({ type: [ServiceUsedDTO] })
-    services_used: ServiceUsedDTO[];
+    // @ApiProperty({ type: [ServiceUsedDTO] })
+    // services_used: ServiceUsedDTO[];
 }

@@ -1,4 +1,4 @@
-import { BeforeInsert, BeforeUpdate, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import * as moment from 'moment-timezone';
 import { RoomType } from "../../room_type/entities/room_type.entity";
 import { Service } from "../../services/entities/service.entity";
@@ -21,6 +21,9 @@ export class RoomService {
         onUpdate: "CASCADE"
     })
     service: Service
+
+    @Column({ type: 'int', nullable: false })
+    quantity: number;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
     createdAt: Date;

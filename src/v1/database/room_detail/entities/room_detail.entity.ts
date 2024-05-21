@@ -4,7 +4,6 @@ import * as moment from 'moment-timezone';
 import { User } from "../../user/entities/user.entity";
 import { Room } from "../../room/entities/room.entity";
 import { Bill } from "../../bill/entities/bill.entity";
-import { ServicesUsed } from "../../services_used/entities/services_used.entity";
 
 @Entity()
 export class RoomDetail {
@@ -29,11 +28,8 @@ export class RoomDetail {
     @Column('decimal', { precision: 6, scale: 2 })
     discount: number
 
-    @OneToOne(() => Bill, bill => bill.roomDetail, {eager: true, onDelete: "CASCADE"})
+    @OneToOne(() => Bill, bill => bill.roomDetail, { eager: true, onDelete: "CASCADE" })
     bill: Bill
-
-    @OneToMany(() => ServicesUsed, (servicesUsed) => servicesUsed.roomDetail)
-    servicesUsed: ServicesUsed[]
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
     createdAt: Date;

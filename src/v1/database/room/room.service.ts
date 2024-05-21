@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository, In, LessThan, MoreThan } from 'typeorm';
 import { Room } from './entities/room.entity';
 import { RoomDetail } from '../room_detail/entities/room_detail.entity';
-import { ServicesUsed } from '../services_used/entities/services_used.entity';
 import { CreateRoomDto } from './dto/room.create.dto';
 import { UpdateRoomDto } from '../../admin/dto/room.update.dto';
 import { RoomTypeService } from '../room_type/room_type.service';
@@ -13,7 +12,6 @@ export class RoomServices {
   constructor(
     @InjectRepository(Room) private readonly roomService: Repository<Room>,
     @InjectRepository(RoomDetail) private readonly roomDetailService: Repository<RoomDetail>,
-    @InjectRepository(ServicesUsed) private readonly servicedUsed: Repository<ServicesUsed>,
     private roomTypeService: RoomTypeService
   ) { }
   async createNewRoom(roomInfo: CreateRoomDto) {
@@ -29,7 +27,7 @@ export class RoomServices {
       throw new BadRequestException({ message: "This room number alrealdy in use" })
     }
 
-    const room :Room = new Room()
+    const room: Room = new Room()
     room.roomNumber = roomInfo.roomNumber
     room.roomType = roomType
 
@@ -38,7 +36,7 @@ export class RoomServices {
     return result
   }
 
-  async getRoomByRoomNumber(roomNumber: number){
+  async getRoomByRoomNumber(roomNumber: number) {
     const room = await this.roomService.findOne({
       where: {
         roomNumber: roomNumber
@@ -53,7 +51,7 @@ export class RoomServices {
     return room
   }
 
-  async getAllRoom(){
+  async getAllRoom() {
     const result = await this.roomService.find({
       relations: {
         roomType: true
@@ -68,7 +66,7 @@ export class RoomServices {
         id: true
       }
     })
-    
+
     const roomBookedId = roomIdBooked.map((value) => {
       return value.id
     })
@@ -86,13 +84,13 @@ export class RoomServices {
 
   async updateRoom(roomData: UpdateRoomDto) {
     const { roomNumber, roomTypeId, roomId } = roomData;
-    if (roomTypeId === undefined){
+    if (roomTypeId === undefined) {
       const result = await this.roomService
-      .createQueryBuilder()
-      .update(Room)
-      .set({roomNumber: roomNumber})
-      .where("id = :id", {id: roomId})
-      .execute()
+        .createQueryBuilder()
+        .update(Room)
+        .set({ roomNumber: roomNumber })
+        .where("id = :id", { id: roomId })
+        .execute()
 
       return result
     }
@@ -113,10 +111,10 @@ export class RoomServices {
     return await this.roomService.save(room)
   }
 
-  async deleteRommById(roomId : number){
+  async deleteRommById(roomId: number) {
     const now = new Date()
     const roomDetailByRoomIdNow = await this.roomDetailService.findOne({
-      where:{
+      where: {
         room: {
           id: roomId
         },
@@ -129,7 +127,7 @@ export class RoomServices {
     }
 
     const roomDetailByRoomIdAfterNow = await this.roomDetailService.find({
-      where:{
+      where: {
         room: {
           id: roomId
         },
@@ -137,20 +135,14 @@ export class RoomServices {
       }
     })
 
-    const idroomDetailByRoomIdAfterNow = roomDetailByRoomIdAfterNow.map((roomDetail)=>{
+    const idroomDetailByRoomIdAfterNow = roomDetailByRoomIdAfterNow.map((roomDetail) => {
       return roomDetail.id
-    })
-
-    await this.servicedUsed.delete({
-      roomDetail: {
-        id: In(idroomDetailByRoomIdAfterNow)
-      }
     })
 
     await this.roomDetailService.delete({
       checkIn: MoreThan(now)
     })
-    
+
     const result = await this.roomService.save({
       id: roomId,
       active: false
