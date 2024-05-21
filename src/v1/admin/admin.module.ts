@@ -17,14 +17,13 @@ import { RoomServices } from '../database/room/room.service';
 import { Room } from '../database/room/entities/room.entity';
 import { RoomDetail } from '../database/room_detail/entities/room_detail.entity';
 import { RoomDetailService } from '../database/room_detail/room_detail.service';
-import { ServicesUsed } from '../database/services_used/entities/services_used.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      User, Role, Service, 
-      RoomType, RoomService, 
-      Room, RoomDetail, Bill, ServicesUsed
+      User, Role, Service,
+      RoomType, RoomService,
+      Room, RoomDetail, Bill,
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],

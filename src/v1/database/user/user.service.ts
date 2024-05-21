@@ -244,7 +244,7 @@ export class UserService {
       if (!user) {
         throw new NotFoundException({ message: "User not found in database." })
       }
-      user.avatar = `static/${file.filename}`
+      user.avatar = `images/${file.filename}`
       return await this.userService.update({ id: userId }, user)
 
 
@@ -255,25 +255,25 @@ export class UserService {
   }
 
   async getUserAvatarById(cookies: Record<string, any>) {
-      // get access_token from cookies
-      const userId = await this.getUserIdFromCookies(cookies);
-      const user = await this.userService.findOne(
-        {
-          where: { id: userId },
-        }
-      )
-      if (!user) {
-        throw new NotFoundException({ message: "User not found in database." })
+    // get access_token from cookies
+    const userId = await this.getUserIdFromCookies(cookies);
+    const user = await this.userService.findOne(
+      {
+        where: { id: userId },
       }
+    )
+    if (!user) {
+      throw new NotFoundException({ message: "User not found in database." })
+    }
 
-      if (user.avatar == null) {
-        if (user.gender == 1) {
-          return "default/male.png"
-        } else {
-          return "default/female.png"
-        }
+    if (user.avatar == null) {
+      if (user.gender == 1) {
+        return "default/male.png"
+      } else {
+        return "default/female.png"
       }
+    }
 
-      return user.avatar
+    return user.avatar
   }
 }

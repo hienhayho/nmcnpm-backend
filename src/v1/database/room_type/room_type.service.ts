@@ -64,32 +64,37 @@ export class RoomTypeService {
   }
 
   async createRoomType(roomTypeInput: AddNewRoomTypeDto) {
-    const services = await this.serviceService.getServiceByNames(roomTypeInput.service_names)
-    const roomType = new RoomType()
-    roomType.name = roomTypeInput.name
-    roomType.capacity = roomTypeInput.capacity
-    roomType.priceBase = roomTypeInput.priceBase
-    roomType.desc = roomTypeInput.desc
+    const { name, desc, capacity, priceBase, services } = roomTypeInput;
+    const newRoomType = new RoomType();
+    newRoomType.name = name;
+    newRoomType.desc = desc;
+    newRoomType.capacity = capacity;
+    newRoomType.priceBase = priceBase;
 
-    const roomTypeSaved = await this.roomTypeService.save(roomType)
+    const savedRoomType = await this.roomTypeService.save(newRoomType);
 
+    const servicesInDb = await this.serviceService.getServiceByNames(services.map(service => service.name))
     const roomServices: RoomService[] = []
-    for (let i = 0; i < services.length; i++) {
+    for (let i = 0; i < servicesInDb.length; i++) {
       const roomService = new RoomService()
-      roomService.service = services[i]
-      roomService.roomType = roomTypeSaved
+      roomService.service = servicesInDb[i]
+      roomService.roomType = savedRoomType
+      roomService.quantity = services[i].quantity
       roomServices.push(roomService)
     }
 
     await this.roomServiceService.insert(roomServices);
 
-    return roomTypeSaved
+    return {
+      savedRoomType,
+      roomServices
+    }
   }
 
   async updateRoomType(roomTypeInput: UpdateRoomTypeDto) {
     const { roomTypeId, name, desc, capacity, priceBase, service_names } = roomTypeInput;
     // Delete old room type
-    
+
     const roomTypeSaved = await this.roomTypeService.find({
       where: {
         id: roomTypeId
@@ -104,12 +109,12 @@ export class RoomTypeService {
     })
 
     const updatedRoomType = await this.roomTypeService
-    .createQueryBuilder()
-    .update(RoomType)
-    .set({name: name, desc: desc, priceBase: priceBase, capacity: capacity})
-    .where("id = :id", {id: roomTypeId})
-    .execute()
-    
+      .createQueryBuilder()
+      .update(RoomType)
+      .set({ name: name, desc: desc, priceBase: priceBase, capacity: capacity })
+      .where("id = :id", { id: roomTypeId })
+      .execute()
+
     const services = await this.serviceService.getServiceByNames(service_names)
     const roomServices: RoomService[] = []
     for (let i = 0; i < services.length; i++) {
@@ -135,26 +140,26 @@ export class RoomTypeService {
   }
 
   async uploadRoomTypeImage(file: Express.Multer.File, roomTypeId: number) {
-      const roomType = await this.getRoomTypeById(roomTypeId)
+    const roomType = await this.getRoomTypeById(roomTypeId)
 
-      if (!roomType){
-        throw new NotFoundException({ message: `room type id = ${roomType.id} not found in database.` })
-      }
+    if (!roomType) {
+      throw new NotFoundException({ message: `room type id = ${roomType.id} not found in database.` })
+    }
 
-      roomType.roomImage = `images/${file.filename}`
+    roomType.roomImage = `images/${file.filename}`
 
-      return await this.roomTypeService.save(roomType)
+    return await this.roomTypeService.save(roomType)
   }
 
   async getRoomTypeImage(roomTypeId: number) {
     const roomType = await this.getRoomTypeById(roomTypeId)
-    
-    if (!roomType || !roomType.roomImage){
+
+    if (!roomType || !roomType.roomImage) {
       // Hình default
       return "default/roomTypeNotFound.png"
     }
 
     return roomType.roomImage
   }
-  
+
 }

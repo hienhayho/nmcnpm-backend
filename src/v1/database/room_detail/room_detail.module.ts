@@ -11,23 +11,23 @@ import { Service } from '../services/entities/service.entity';
 import { User } from '../user/entities/user.entity';
 import { Role } from '../role/entities/role.entity';
 import { Bill } from '../bill/entities/bill.entity';
-import { ServicesUsed } from '../services_used/entities/services_used.entity';
 import { Room } from '../room/entities/room.entity';
+import { RoomService } from '../room-service/entities/room-service.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RoomDetail, Service, User, Role, Bill, ServicesUsed, Room]),
+    TypeOrmModule.forFeature([RoomDetail, Service, User, Role, Bill, Room, RoomService]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-          global: true,
-          secret: configService.get("JWT_KEY"),
-          signOptions: { expiresIn: configService.get("EXPIRE_IN") },
+        global: true,
+        secret: configService.get("JWT_KEY"),
+        signOptions: { expiresIn: configService.get("EXPIRE_IN") },
       })
-  })
+    })
   ],
   controllers: [RoomDetailController, ServicesController],
   providers: [RoomDetailService, ServicesService]
 })
-export class RoomDetailModule {}
+export class RoomDetailModule { }
