@@ -194,7 +194,6 @@ export class RoomDetailService {
     )
     const roomDetail = await this.roomDetailService.findOne({
       where: { id: id },
-
     })
     const checkIn = roomDetail.checkIn;
     if (current > checkIn) {
