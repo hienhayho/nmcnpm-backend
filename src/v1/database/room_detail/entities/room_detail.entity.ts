@@ -22,13 +22,15 @@ export class RoomDetail {
     @Column()
     checkIn: Date
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     checkOut: Date
 
     @Column('decimal', { precision: 6, scale: 2 })
     discount: number
 
-    @OneToOne(() => Bill, bill => bill.roomDetail, { eager: true, onDelete: "CASCADE" })
+    @OneToOne(() => Bill, bill => bill.roomDetail, { eager: true, onDelete: "CASCADE", nullable: true })
     bill: Bill
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })

@@ -22,9 +22,15 @@ export class Room {
 
     @Column({
         nullable: false,
-        default:true 
+        default: true 
     })
     active: boolean
+
+    @Column({
+        nullable: false,
+        default: false
+    })
+    booked: boolean
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
     createdAt: Date;

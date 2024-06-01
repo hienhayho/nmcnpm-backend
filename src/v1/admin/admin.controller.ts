@@ -315,15 +315,59 @@ export class AdminController {
     }
   }
 
+  @ApiOperation({summary: "Get bill of a room detail"})
+  @Post("roomdetail/bill/:billId")
+  async getRoomDetailBill(@Param("billId") id: string){
+    try {
+      const roomDetailId = parseInt(id);
+      const result = await this.roomDetailService.computeBill(roomDetailId)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: `Get bill of roomDetailId=${roomDetailId} successfully.`,
+        data: result
+      }
+    } catch (err) {
+      console.error("admin.controller.ts getRoomDetailBill: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
+  }
+
+  @ApiOperation({summary: "Accept pay bill"})
+  @Post("roomdetail/payBill/:billId")
+  async payBill(@Param("billId") id: string){
+    try {
+      const roomDetailId = parseInt(id);
+      const result = await this.roomDetailService.payBill(roomDetailId);
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: `Pay bill of roomDetailId=${roomDetailId} successfully.`,
+        data: result
+      }
+    } catch (err) {
+      console.error("admin.controller.ts payBill: ", err)
+      return {
+        status: err.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
+  }
+
   @ApiOperation({ summary: "Get all bill" })
-  @Get("bill")
+  @Get("bills")
   async getAllBills() {
     try {
       const result = await this.billService.getAllBills()
       return {
         status: HttpStatus.OK,
         error: 0,
-        message: "Get all bill successfully.",
+        message: "Get all bills successfully.",
         data: result
       }
     } catch (err) {

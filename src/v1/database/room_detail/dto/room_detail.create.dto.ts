@@ -48,12 +48,12 @@ export class CreateRoomDetailDto {
     })
     checkIn: Date;
 
-    @IsDateString()
-    @IsNotEmpty()
-    @ApiProperty({
-        type: Date
-    })
-    checkOut: Date;
+    // @IsDateString()
+    // @IsNotEmpty()
+    // @ApiProperty({
+    //     type: Date
+    // })
+    // checkOut: Date;
 
     // @ApiProperty({ type: [ServiceUsedDTO] })
     // services_used: ServiceUsedDTO[];

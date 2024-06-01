@@ -107,26 +107,7 @@ export class RoomDetailService {
     // check thời gian checkin checkout
 
     const checkInDate = new Date(roomDetailReq.checkIn)
-    const checkOutDate = new Date(roomDetailReq.checkOut)
-    const isDateValidate = checkInDate < checkOutDate
-    if (!isDateValidate) {
-      throw new BadRequestException({ message: "Checkout time must be larger than Checkin" })
-    }
-
-    const days = dateDiff(checkInDate, checkOutDate);
-    if (days < 0.5) {
-      throw new BadRequestException({ message: "Must register at least half a day." })
-    }
-
-    // check phòng đã được đặt chưa
-    const roomBooked = await this.getRoomDetailById(roomDetailReq.roomId)
-    if (roomBooked.length > 0) {
-      // thời gian checkout xa nhất có < thời gian checkin
-      if (roomBooked[0].checkOut >= new Date(roomDetailReq.checkIn)) {
-        throw new BadRequestException({ message: "This room booked by other customers" })
-      }
-    }
-
+    
     // check room features 
     const room = await this.roomService.findOne({
       where: {
@@ -136,28 +117,20 @@ export class RoomDetailService {
         roomType: true
       }
     })
-
+    // check coi co ai da dat chua
+    if (room.booked){
+      throw new BadRequestException({ message: `Room with id=${roomDetailReq.roomId} has been booked` })
+    }
     // check room active
     if (!room.active) {
       throw new BadRequestException({ message: `Room with id=${room.id} is not active` })
     }
-
     // check room capacity
     if (room.roomType.capacity < roomDetailReq.numUser) {
       throw new BadRequestException({ message: `Out of capacity=${room.roomType.capacity} with numberOfPeople=${roomDetailReq.numUser}` })
     }
-
-    // check room price
-    const roomServices = await this.roomServiceService.find({
-      where: {
-        roomType: {
-          id: room.roomType.id
-        }
-      },
-      relations: {
-        service: true
-      }
-    })
+    room.booked = true;
+    const roomBooked = await this.roomService.save(room)
 
     const user = await this.userService.findOne({
       where: {
@@ -165,26 +138,91 @@ export class RoomDetailService {
       }
     })
 
-    const bill = new Bill()
-    bill.user = user;
-    bill.paid = false;
-    bill.priceAll = Math.round((roomServices.reduce(
-      (accumlator, currentValue) => accumlator + (currentValue.service.price * currentValue.quantity),
-      0
-    ) + (room.roomType.priceBase * days)) * (1 - roomDetailReq.discount) * 100) / 100;
-    await this.billService.save(bill)
-
     const roomDetail = new RoomDetail()
-    roomDetail.room = room;
+    roomDetail.room = roomBooked;
     roomDetail.user = user;
-    roomDetail.bill = bill;
     roomDetail.checkIn = checkInDate;
-    roomDetail.checkOut = checkOutDate;
     roomDetail.numberUsers = roomDetailReq.numUser;
     roomDetail.discount = roomDetailReq.discount;
 
     const result = await this.roomDetailService.save(roomDetail)
     return result
+  }
+
+  async computeBill(id: number){
+    const billHasExists = await this.billService.findOne({
+      relations: {
+        roomDetail: true
+      },
+      where: {
+        roomDetail: {
+          id: id
+        }
+      }
+    })
+    if (billHasExists) {
+      return billHasExists
+    }
+    const roomDetail = await this.roomDetailService.findOne({
+      where: { id: id },
+      relations: {
+        room: {
+          roomType: true
+        },
+        user: true
+      }
+    })
+    const roomServices = await this.roomServiceService.find({
+      where: {
+        roomType: {
+          id: roomDetail.room.roomType.id
+        }
+      },
+      relations: {
+        service: true
+      }
+    })
+    const checkInDate = new Date(roomDetail.checkIn);
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const checkOutDate = new Date(
+      moment().tz(timezone).format("YYYY-MM-DD HH:mm:ss")
+    )
+    const days = dateDiff(checkInDate, checkOutDate);
+    const bill = new Bill()
+    bill.user = roomDetail.user;
+    bill.paid = false;
+    bill.priceAll = Math.round((roomServices.reduce(
+      (accumlator, currentValue) => accumlator + (currentValue.service.price * currentValue.quantity),
+      0
+    ) + (roomDetail.room.roomType.priceBase * days)) * (1 - roomDetail.discount) * 100) / 100;
+    await this.billService.save(bill)
+    
+    roomDetail.bill = bill;
+    roomDetail.checkOut = checkOutDate;
+
+    // Update room detail
+    await this.roomDetailService.save(roomDetail);
+    return bill
+  }
+
+  async payBill(id: number) {
+    const bill = await this.billService.findOne({
+      where: { id: id },
+      relations: {
+        roomDetail: {
+          room: true
+        }
+      }
+    })
+    bill.paid = true;
+    await this.billService.save(bill)
+    
+    const room = await this.roomService.findOne({
+      where: {id: bill.roomDetail.room.id}
+    })
+    room.booked = false;
+    await this.roomService.save(room)
+    return bill
   }
 
   async deleteRoomDetailById(id: number) {

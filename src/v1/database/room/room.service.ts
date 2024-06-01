@@ -61,22 +61,9 @@ export class RoomServices {
   }
 
   async getAllRoomNotBooked() {
-    const roomIdBooked = await this.roomDetailService.find({
-      select: {
-        id: true
-      }
-    })
-
-    const roomBookedId = roomIdBooked.map((value) => {
-      return value.id
-    })
-
     const roomNotBooked = await this.roomService.find({
       where: {
-        id: Not(In(roomBookedId))
-      },
-      relations: {
-        roomType: true
+        booked: false
       }
     })
     return roomNotBooked
