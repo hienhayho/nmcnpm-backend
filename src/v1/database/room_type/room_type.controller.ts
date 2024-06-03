@@ -8,7 +8,7 @@ import { AuthGuard } from '@/middleware/authenticate';
 import { getImagesById, getImagesFolder } from '@/utils';
 import { RoomTypeService } from './room_type.service';
 import { RoomTypeImageDto } from './dto/room_type.upload.image.dto';
-import { v4 as uuidv4} from "uuid"
+import { v4 as uuidv4 } from "uuid"
 const path = require('path')
 
 @Controller('v1/room_type')
@@ -63,58 +63,58 @@ export class RoomTypeController {
   }
 
   @ApiOperation({ summary: "Upload image for room type" })
-  @Post('room_type/upload')
+  @Post('room_type/upload/:id')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file', {
-      storage: diskStorage({
-          destination: getImagesFolder(),
-          filename: (req,file,cb) => {
-            const fileName: string = path.parse(file.originalname).name.replace(/\s/g,'') + uuidv4();
-            const extension: string = path.parse(file.originalname).ext;
+    storage: diskStorage({
+      destination: getImagesFolder(),
+      filename: (req, file, cb) => {
+        const fileName: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+        const extension: string = path.parse(file.originalname).ext;
 
-            cb(null,`${fileName}${extension}`)
-          }
-      })
-  }))
-  async uploadRoomTypeImage(@Body() data: RoomTypeImageDto, @UploadedFile() file: Express.Multer.File) {
-      try {
-          const {roomTypeId} = data
-          const result = await this.roomTypeService.uploadRoomTypeImage(file,roomTypeId)
-          return {
-              status: HttpStatus.OK,
-              error: 0,
-              message: "Upload room type image successfully",
-          }
-      } catch (err) {
-          console.error("room_type.controller.ts uploadRoomTypeImage: ", err)
-          return {
-              status: err.status,
-              error: 1,
-              message: err.response.message
-          }
+        cb(null, `${fileName}${extension}`)
       }
+    })
+  }))
+  async uploadRoomTypeImage(@Param("id") id: string, @UploadedFile() file: Express.Multer.File) {
+    try {
+      const roomTypeId = parseInt(id)
+      const result = await this.roomTypeService.uploadRoomTypeImage(file, roomTypeId)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Upload room type image successfully",
+      }
+    } catch (err) {
+      console.error("room_type.controller.ts uploadRoomTypeImage: ", err)
+      return {
+        status: err.status,
+        error: 1,
+        message: err.response.message
+      }
+    }
   }
 
   @Post('room_type_image/:id')
   async getRoomTypeImage(
-      @Param("id") id: string
-  ){
-      try {
-          const roomTypeId = parseInt(id)
-          const imagePath = await this.roomTypeService.getRoomTypeImage(roomTypeId)
-          return {
-            status: HttpStatus.OK,
-            error: 0,
-            message: "Get room type image successfully",
-            result: imagePath,
-        }
-      } catch (err) {
-        console.error("room_type.controller.ts getRoomTypeImage: ", err)
-        return {
-            status: err.status,
-            error: 1,
-            message: err.response.message
-        }
+    @Param("id") id: string
+  ) {
+    try {
+      const roomTypeId = parseInt(id)
+      const imagePath = await this.roomTypeService.getRoomTypeImage(roomTypeId)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Get room type image successfully",
+        result: imagePath,
       }
+    } catch (err) {
+      console.error("room_type.controller.ts getRoomTypeImage: ", err)
+      return {
+        status: err.status,
+        error: 1,
+        message: err.response.message
+      }
+    }
   }
 }
