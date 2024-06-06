@@ -30,6 +30,7 @@ export class RoomServices {
     const room: Room = new Room()
     room.roomNumber = roomInfo.roomNumber
     room.roomType = roomType
+    room.discount = roomInfo.discount
 
     const result = await this.roomService.save(room)
 
@@ -67,6 +68,16 @@ export class RoomServices {
       }
     })
     return roomNotBooked
+  }
+
+  async getRoomByRoomTypeId(roomTypeId: number) {
+    return await this.roomService.find({
+      where: {
+        roomType: {
+          id: roomTypeId
+        }
+      }
+    })
   }
 
   async updateRoom(roomData: UpdateRoomDto) {

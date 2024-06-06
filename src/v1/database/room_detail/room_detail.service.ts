@@ -107,7 +107,7 @@ export class RoomDetailService {
     // check thời gian checkin checkout
 
     const checkInDate = new Date(roomDetailReq.checkIn)
-    
+
     // check room features 
     const room = await this.roomService.findOne({
       where: {
@@ -117,8 +117,11 @@ export class RoomDetailService {
         roomType: true
       }
     })
+    if (!room) {
+      throw new BadRequestException({ message: `Room with id=${roomDetailReq.roomId} not exists in db.` })
+    }
     // check coi co ai da dat chua
-    if (room.booked){
+    if (room.booked) {
       throw new BadRequestException({ message: `Room with id=${roomDetailReq.roomId} has been booked` })
     }
     // check room active
@@ -143,13 +146,12 @@ export class RoomDetailService {
     roomDetail.user = user;
     roomDetail.checkIn = checkInDate;
     roomDetail.numberUsers = roomDetailReq.numUser;
-    roomDetail.discount = roomDetailReq.discount;
 
     const result = await this.roomDetailService.save(roomDetail)
     return result
   }
 
-  async computeBill(id: number){
+  async computeBill(id: number) {
     const billHasExists = await this.billService.findOne({
       relations: {
         roomDetail: true
@@ -187,6 +189,14 @@ export class RoomDetailService {
     const checkOutDate = new Date(
       moment().tz(timezone).format("YYYY-MM-DD HH:mm:ss")
     )
+    const room = await this.roomService.findOne({
+      where: {
+        id: roomDetail.room.id
+      }
+    })
+    if (!room) {
+      throw new BadRequestException({ message: "No room suitable found in DB" })
+    }
     const days = dateDiff(checkInDate, checkOutDate);
     const bill = new Bill()
     bill.user = roomDetail.user;
@@ -194,9 +204,9 @@ export class RoomDetailService {
     bill.priceAll = Math.round((roomServices.reduce(
       (accumlator, currentValue) => accumlator + (currentValue.service.price * currentValue.quantity),
       0
-    ) + (roomDetail.room.roomType.priceBase * days)) * (1 - roomDetail.discount) * 100) / 100;
+    ) + (roomDetail.room.roomType.priceBase * days)) * (1 - room.discount) * 100) / 100;
     await this.billService.save(bill)
-    
+
     roomDetail.bill = bill;
     roomDetail.checkOut = checkOutDate;
 
@@ -216,9 +226,9 @@ export class RoomDetailService {
     })
     bill.paid = true;
     await this.billService.save(bill)
-    
+
     const room = await this.roomService.findOne({
-      where: {id: bill.roomDetail.room.id}
+      where: { id: bill.roomDetail.room.id }
     })
     room.booked = false;
     await this.roomService.save(room)

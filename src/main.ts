@@ -17,7 +17,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   app.enableCors({
     credentials: true,
-    origin: configService.get("FRONTEND_HOST") 
+    origin: configService.get("FRONTEND_HOST"),
   });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());

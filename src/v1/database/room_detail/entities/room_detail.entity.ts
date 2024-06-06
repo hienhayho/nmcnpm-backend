@@ -27,9 +27,6 @@ export class RoomDetail {
     })
     checkOut: Date
 
-    @Column('decimal', { precision: 6, scale: 2 })
-    discount: number
-
     @OneToOne(() => Bill, bill => bill.roomDetail, { eager: true, onDelete: "CASCADE", nullable: true })
     bill: Bill
 

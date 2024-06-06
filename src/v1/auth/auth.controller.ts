@@ -97,4 +97,20 @@ export class AuthController {
         }
     }
 
+    @ApiOperation({ summary: "Logout" })
+    @Post("logout")
+    async logout(@Res({ passthrough: true }) res: Response) {
+
+        const config = {
+            secure: true,
+            httpOnly: true,
+        }
+        res.clearCookie('access_token', config);
+        res.clearCookie('role_id', config);
+        return {
+            status: HttpStatus.OK,
+            error: 0,
+            message: "Logout successfully."
+        }
+    }
 }

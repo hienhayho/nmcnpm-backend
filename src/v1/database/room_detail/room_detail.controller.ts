@@ -11,9 +11,9 @@ import { RoomDetailService } from './room_detail.service';
 export class RoomDetailController {
     constructor(
         private readonly roomDetailService: RoomDetailService
-    ) {}
+    ) { }
 
-    @ApiOperation({summary: "Get room detail booked by userId"})
+    @ApiOperation({ summary: "Get room detail booked by userId" })
     @Get()
     async getRoomDetailBooked(@Req() request: Request) {
         try {
@@ -33,9 +33,9 @@ export class RoomDetailController {
                 message: err.response.message ?? err.message ?? "Internal Server Error!"
             }
         }
-    }    
-    
-    @ApiOperation({summary: "Get room detail by id."})
+    }
+
+    @ApiOperation({ summary: "Get room detail by id." })
     @Get("get_by_room_id/:id")
     async getRoomDetailByRoomId(@Param("id") id: string) {
         try {
@@ -61,7 +61,7 @@ export class RoomDetailController {
     async createRoomDetail(@Body() roomDetailReq: CreateRoomDetailDto, @Req() request: Request) {
         try {
             const cookies = request.cookies
-            const result = await this.roomDetailService.createRoomDetail(cookies,roomDetailReq);
+            const result = await this.roomDetailService.createRoomDetail(cookies, roomDetailReq);
             return {
                 status: HttpStatus.OK,
                 error: 0,
@@ -78,7 +78,7 @@ export class RoomDetailController {
         }
     }
 
-    @ApiOperation({summary: "Delete room detail by id."})
+    @ApiOperation({ summary: "Delete room detail by id." })
     @Delete("delete/:id")
     async deleteRoomDetailById(@Param("id") id: string) {
         try {

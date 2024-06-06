@@ -299,7 +299,7 @@ export class AdminController {
     }
   }
 
-  @ApiOperation({summary: "Get user avatar with avatar id."})
+  @ApiOperation({ summary: "Get user avatar with avatar id." })
   @Post('user/user_avatar/:id')
   async getUserAvatarById(
     @Res({ passthrough: true }) res: Response,
@@ -315,9 +315,9 @@ export class AdminController {
     }
   }
 
-  @ApiOperation({summary: "Get bill of a room detail"})
-  @Post("roomdetail/bill/:billId")
-  async getRoomDetailBill(@Param("billId") id: string){
+  @ApiOperation({ summary: "Get bill of a room detail id" })
+  @Post("roomdetail/bill/:id")
+  async getRoomDetailBill(@Param("id") id: string) {
     try {
       const roomDetailId = parseInt(id);
       const result = await this.roomDetailService.computeBill(roomDetailId)
@@ -337,9 +337,9 @@ export class AdminController {
     }
   }
 
-  @ApiOperation({summary: "Accept pay bill"})
-  @Post("roomdetail/payBill/:billId")
-  async payBill(@Param("billId") id: string){
+  @ApiOperation({ summary: "Accept pay bill" })
+  @Post("roomdetail/payBill/:id")
+  async payBill(@Param("id") id: string) {
     try {
       const roomDetailId = parseInt(id);
       const result = await this.roomDetailService.payBill(roomDetailId);

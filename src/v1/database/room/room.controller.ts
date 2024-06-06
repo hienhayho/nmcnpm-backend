@@ -9,21 +9,43 @@ import { RoomServices } from './room.service';
 export class RoomController {
     constructor(
         private readonly roomService: RoomServices
-    ) {}
+    ) { }
 
     @ApiOperation({ summary: "Get room by room number" })
-    @Get("get_room/:roomNumber")
+    @Get("get_room/room/:roomNumber")
     async getRoomByRoomNumber(@Param("roomNumber") roomNumber: number) {
         try {
             const result = await this.roomService.getRoomByRoomNumber(roomNumber)
             return {
-              status: HttpStatus.CREATED,
-              error: 0,
-              message: "Get room by number successfully.",
-              data: result
+                status: HttpStatus.CREATED,
+                error: 0,
+                message: "Get room by number successfully.",
+                data: result
             }
         } catch (err) {
             console.error("room.controller.ts getRoomByRoomNumber: ", err)
+            return {
+                status: err.status,
+                error: 1,
+                message: err.response.message ?? err.message ?? "Internal Server Error!"
+            }
+        }
+    }
+
+    @ApiOperation({ summary: "Get room by room type Id" })
+    @Get("get_room/room_type/:roomTypeId")
+    async getRoomByRoomTypeId(@Param("roomTypeId") roomTypeId: string) {
+        try {
+            const roomTypeIdNum = parseInt(roomTypeId);
+            const result = await this.roomService.getRoomByRoomTypeId(roomTypeIdNum)
+            return {
+                status: HttpStatus.CREATED,
+                error: 0,
+                message: `Get room by roomTypeId=${roomTypeId} successfully.`,
+                data: result
+            }
+        } catch (err) {
+            console.error("room.controller.ts getRoomByRoomTypeId: ", err)
             return {
                 status: err.status,
                 error: 1,
@@ -38,10 +60,10 @@ export class RoomController {
         try {
             const result = await this.roomService.getAllRoom()
             return {
-              status: HttpStatus.CREATED,
-              error: 0,
-              message: "Get all room successfully.",
-              data: result
+                status: HttpStatus.CREATED,
+                error: 0,
+                message: "Get all room successfully.",
+                data: result
             }
         } catch (err) {
             console.error("room.controller.ts getAllRoom: ", err)
@@ -59,10 +81,10 @@ export class RoomController {
         try {
             const result = await this.roomService.getAllRoomNotBooked()
             return {
-              status: HttpStatus.CREATED,
-              error: 0,
-              message: "Get all room successfully.",
-              data: result
+                status: HttpStatus.CREATED,
+                error: 0,
+                message: "Get all room successfully.",
+                data: result
             }
         } catch (err) {
             console.error("room.controller.ts getAllRoomNotBooked: ", err)

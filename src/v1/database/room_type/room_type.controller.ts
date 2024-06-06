@@ -95,7 +95,7 @@ export class RoomTypeController {
     }
   }
 
-  @Post('room_type_image/:id')
+  @Get('room_type_image/:id')
   async getRoomTypeImage(
     @Param("id") id: string
   ) {

@@ -22,9 +22,12 @@ export class Room {
 
     @Column({
         nullable: false,
-        default: true 
+        default: true
     })
     active: boolean
+
+    @Column('decimal', { precision: 6, scale: 2 })
+    discount: number
 
     @Column({
         nullable: false,

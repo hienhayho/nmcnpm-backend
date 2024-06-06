@@ -34,13 +34,6 @@ export class CreateRoomDetailDto {
     })
     numUser: number
 
-    @Min(0)
-    @Max(100)
-    @ApiProperty({
-        type: Number
-    })
-    discount: number;
-
     @IsDateString()
     @IsNotEmpty()
     @ApiProperty({
