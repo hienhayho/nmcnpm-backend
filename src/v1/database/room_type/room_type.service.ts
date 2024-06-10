@@ -42,11 +42,13 @@ export class RoomTypeService {
         capacity: true,
         priceBase: true,
         desc: true,
+        roomImage: true,
         roomService: {
           id: true,
           service: {
             id: true,
-            name: true
+            name: true,
+            price: true
           }
         }
       },

@@ -40,8 +40,8 @@ export class RoomTypeController {
     }
   }
 
-  @ApiOperation({ summary: "Get room type with its services." })
-  @Post("get_room_type/:id")
+  @ApiOperation({ summary: "Get room by id with its services." })
+  @Get("get_room_type/:id")
   async getRoomTypeWithItsServices(@Param("id") id: string) {
     const roomTypeId = parseInt(id)
     try {
