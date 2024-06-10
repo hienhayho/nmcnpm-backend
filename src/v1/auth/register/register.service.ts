@@ -44,10 +44,10 @@ export class RegisterService {
         const hashPassword = await bcrypt.hash(password, saltOrRounds);
         let avatar = null;
         if (userInfo.gender == 1) {
-            avatar = "male.png"
+            avatar = "default/male.png"
         }
         else {
-            avatar = "female.png"
+            avatar = "default/female.png"
         }
         const user = {
             ...userInfo,
