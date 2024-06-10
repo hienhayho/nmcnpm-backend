@@ -13,7 +13,9 @@ export class RoomDetail {
     @ManyToOne(() => User)
     user: User
 
-    @ManyToOne(() => Room)
+    @ManyToOne(() => Room, {
+        eager: true
+    })
     room: Room
 
     @Column()
