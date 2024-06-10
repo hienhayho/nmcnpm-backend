@@ -14,7 +14,7 @@ export class RoomDetail {
     user: User
 
     @ManyToOne(() => Room, {
-        eager: true
+        nullable: true
     })
     room: Room
 
@@ -29,7 +29,7 @@ export class RoomDetail {
     })
     checkOut: Date
 
-    @OneToOne(() => Bill, bill => bill.roomDetail, { eager: true, onDelete: "CASCADE", nullable: true })
+    @OneToOne(() => Bill, bill => bill.roomDetail, { onDelete: "CASCADE", nullable: true })
     bill: Bill
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })

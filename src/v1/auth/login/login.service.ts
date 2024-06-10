@@ -33,7 +33,8 @@ export class LoginService {
         const payload = { id: userId };
         return {
           access_token: await this.jwtService.signAsync(payload),
-          roleId: user[0].role.id
+          roleId: user[0].role.id,
+          userName: user[0].userName
         };
     }
 }
