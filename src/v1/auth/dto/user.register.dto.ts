@@ -40,4 +40,10 @@ export class UserRegister {
         type: Number
     })
     gender: number;
+
+    @IsString()
+    @ApiProperty({
+        type: String
+    })
+    country: string;
 }
