@@ -20,15 +20,36 @@ export class RoomDetailService {
     @InjectRepository(Bill) private readonly billService: Repository<Bill>,
     @InjectRepository(Room) private readonly roomService: Repository<Room>,
     @InjectRepository(RoomService) private readonly roomServiceService: Repository<RoomService>,
-    private serviceService: ServicesService,
     private jwtService: JwtService
   ) { }
 
   async getAllRoomDetailed() {
     return await this.roomDetailService.find({
+      select: {
+        id: true,
+        checkIn: true,
+        checkOut: true,
+        user: {
+          id: true,
+          userName: true,
+          phone: true,
+          email: true,
+          fullName: true
+        },
+        bill: {
+          id: true,
+          priceAll: true,
+          paid: true,
+        },
+        room: {
+          id: true,
+          roomNumber: true,
+        }
+      },
       relations: {
         user: true,
-        bill: true
+        bill: true,
+        room: true
       }
     })
   }
@@ -153,8 +174,28 @@ export class RoomDetailService {
 
   async computeBill(id: number) {
     const billHasExists = await this.billService.findOne({
+      select: {
+        id: true,
+        priceAll: true,
+        paid: true,
+        roomDetail: {
+          checkIn: true,
+          checkOut: true,
+          user: {
+            fullName: true,
+            phone: true,
+            email: true
+          },
+          room: {
+            id: true,
+            roomNumber: true
+          }
+        }
+      },
       relations: {
-        roomDetail: true
+        roomDetail: {
+          user: true
+        }
       },
       where: {
         roomDetail: {
@@ -220,7 +261,11 @@ export class RoomDetailService {
 
   async payBill(id: number) {
     const bill = await this.billService.findOne({
-      where: { id: id },
+      where: {
+        roomDetail: {
+          id: id
+        }
+      },
       relations: {
         roomDetail: {
           room: true

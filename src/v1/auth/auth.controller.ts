@@ -21,7 +21,7 @@ export class AuthController {
     @Post("login")
     async login(@Res({ passthrough: true }) response: Response, @Body() userInfo: UserLogin) {
         try {
-            const { access_token, roleId } = await this.loginService.login(userInfo)
+            const { access_token, roleId, userName } = await this.loginService.login(userInfo)
             if (access_token) {
                 const expires = new Date();
                 expires.setMilliseconds(
@@ -33,6 +33,9 @@ export class AuthController {
                     expires
                 })
                 response.cookie("role_id", roleId, {
+                    expires
+                })
+                response.cookie("userName", userName, {
                     expires
                 })
                 return {

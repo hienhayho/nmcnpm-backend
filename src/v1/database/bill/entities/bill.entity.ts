@@ -11,13 +11,15 @@ export class Bill {
     @Column('decimal', { precision: 64, scale: 2 })
     priceAll: number
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, {
+        eager: true
+    })
     user: User
 
     @Column()
     paid: boolean
 
-    @OneToOne(() => RoomDetail, roomDetail => roomDetail.bill, {onDelete: "CASCADE"})
+    @OneToOne(() => RoomDetail, roomDetail => roomDetail.bill, { onDelete: "CASCADE" })
     @JoinColumn()
     roomDetail: RoomDetail
 
