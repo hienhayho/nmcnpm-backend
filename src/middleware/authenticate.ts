@@ -23,7 +23,7 @@ export class AdminAuth implements CanActivate {
     const cookies = request.cookies
     const roleId = cookies["role_id"]
     if (!roleId || roleId !== "1") {
-      throw new ForbiddenException({ message: "Only admin account could access this." });
+      throw new ForbiddenException({ statusCode: 401, message: "Only admin account could access this." });
     }
     return true
   }

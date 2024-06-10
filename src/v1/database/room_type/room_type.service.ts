@@ -46,7 +46,8 @@ export class RoomTypeService {
           id: true,
           service: {
             id: true,
-            name: true
+            name: true,
+            price: true
           }
         }
       },

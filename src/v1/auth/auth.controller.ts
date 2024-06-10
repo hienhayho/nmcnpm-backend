@@ -33,8 +33,6 @@ export class AuthController {
                     expires
                 })
                 response.cookie("role_id", roleId, {
-                    secure: true,
-                    httpOnly: true,
                     expires
                 })
                 return {

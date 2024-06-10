@@ -7,14 +7,13 @@ export class Service {
     @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column({unique: true, nullable: false})
+    @Column({ unique: true, nullable: false })
     name: string;
 
-    @Column("bigint", {nullable: false})
+    @Column("bigint", { nullable: false })
     price: number;
 
     @OneToMany(() => RoomService, (roomService) => roomService.service, {
-        eager: true,
         cascade: true
     })
     roomService: RoomService[]
