@@ -189,6 +189,9 @@ export class RoomDetailService {
     const checkOutDate = new Date(
       moment().tz(timezone).format("YYYY-MM-DD HH:mm:ss")
     )
+    if (checkOutDate < checkInDate) {
+      throw new BadRequestException({ message: "Check out date must be greater than check in date" })
+    }
     const room = await this.roomService.findOne({
       where: {
         id: roomDetail.room.id
