@@ -403,7 +403,7 @@ export class AdminController {
   }
 
   @ApiOperation({ summary: "Active room by Id." })
-  @Patch("room/:id")
+  @Patch("room_active/:id")
   async activeRommById(@Param("id") id: string) {
     try {
       const roomId = parseInt(id)
