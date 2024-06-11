@@ -14,7 +14,8 @@ export class RoomDetail {
     user: User
 
     @ManyToOne(() => Room, {
-        nullable: true
+        nullable: true,
+        eager: true
     })
     room: Room
 

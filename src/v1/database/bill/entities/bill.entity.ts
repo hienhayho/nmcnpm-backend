@@ -11,9 +11,7 @@ export class Bill {
     @Column('decimal', { precision: 64, scale: 2 })
     priceAll: number
 
-    @ManyToOne(() => User, {
-        eager: true
-    })
+    @ManyToOne(() => User)
     user: User
 
     @Column()
