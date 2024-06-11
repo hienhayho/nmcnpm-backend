@@ -110,42 +110,28 @@ export class RoomServices {
   }
 
   async deleteRommById(roomId: number) {
-    const now = new Date()
-    const roomDetailByRoomIdNow = await this.roomDetailService.findOne({
+    const room = await this.roomService.findOne({
       where: {
-        room: {
-          id: roomId
-        },
-        checkIn: LessThan(now),
-        checkOut: MoreThan(now)
+        id: roomId
       }
     })
-    if (roomDetailByRoomIdNow) {
-      throw new BadRequestException({ message: `This room with id=${roomId} is already in use ` });
+    if (room.booked) {
+      throw new BadRequestException({ message: `Room with id=${roomId} is now booked, not allow to deactive.` })
     }
+    room.active = false;
+    return await this.roomService.save(room)
+  }
 
-    const roomDetailByRoomIdAfterNow = await this.roomDetailService.find({
+  async activeRoomById(roomId: number) {
+    const room = await this.roomService.findOne({
       where: {
-        room: {
-          id: roomId
-        },
-        checkIn: MoreThan(now),
+        id: roomId
       }
     })
-
-    const idroomDetailByRoomIdAfterNow = roomDetailByRoomIdAfterNow.map((roomDetail) => {
-      return roomDetail.id
-    })
-
-    await this.roomDetailService.delete({
-      checkIn: MoreThan(now)
-    })
-
-    const result = await this.roomService.save({
-      id: roomId,
-      active: false
-    })
-
-    return result
+    if (room.active) {
+      throw new BadRequestException({ message: `Room with id=${roomId} is now active, not allow to active again.` })
+    }
+    room.active = true;
+    return await this.roomService.save(room)
   }
 }
