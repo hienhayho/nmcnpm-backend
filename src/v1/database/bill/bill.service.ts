@@ -22,10 +22,11 @@ export class BillService {
           userName: true,
           fullName: true,
           phone: true,
-        }
+        },
       },
       relations: {
-        user: true
+        user: true,
+        roomDetail: true
       }
     })
   }

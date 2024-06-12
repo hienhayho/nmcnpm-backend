@@ -19,6 +19,15 @@ export class RegisterService {
             id: roleId,
         });
 
+        const { phone } = userInfo;
+        // check valid phone number
+        if (phone) {
+            const phoneRegex = new RegExp(/^\d+$/);
+            if (!phoneRegex.test(phone)) {
+                throw new BadRequestException({ message: "Phone number is not valid." })
+            }
+        }
+
         if (role.length == 0) {
             throw new BadRequestException({ message: "Rold Id not exist in database." })
         }

@@ -380,8 +380,6 @@ export class AdminController {
     }
   }
 
-
-
   @ApiOperation({ summary: "Delete room by Id." })
   @Delete("room/:id")
   async deleteRommById(@Param("id") id: string) {
@@ -396,6 +394,28 @@ export class AdminController {
       }
     } catch (err) {
       console.error("admin.controller.ts deleteRommById: ", err)
+      return {
+        status: err.status,
+        error: 1,
+        message: err.response.message ?? err.message ?? "Internal Server Error!"
+      }
+    }
+  }
+
+  @ApiOperation({ summary: "Active room by Id." })
+  @Patch("room_active/:id")
+  async activeRommById(@Param("id") id: string) {
+    try {
+      const roomId = parseInt(id)
+      const result = await this.roomService.activeRoomById(roomId)
+      return {
+        status: HttpStatus.OK,
+        error: 0,
+        message: "Active room successfully.",
+        data: result
+      }
+    } catch (err) {
+      console.error("admin.controller.ts activeRommById: ", err)
       return {
         status: err.status,
         error: 1,

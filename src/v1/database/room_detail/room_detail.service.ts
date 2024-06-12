@@ -256,7 +256,9 @@ export class RoomDetailService {
 
     // Update room detail
     await this.roomDetailService.save(roomDetail);
-    return bill
+    return {
+      bill, roomDetail
+    }
   }
 
   async payBill(id: number) {

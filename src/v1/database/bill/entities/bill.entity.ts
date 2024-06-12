@@ -17,7 +17,7 @@ export class Bill {
     @Column()
     paid: boolean
 
-    @OneToOne(() => RoomDetail, roomDetail => roomDetail.bill, {onDelete: "CASCADE"})
+    @OneToOne(() => RoomDetail, roomDetail => roomDetail.bill, { onDelete: "CASCADE" })
     @JoinColumn()
     roomDetail: RoomDetail
 
