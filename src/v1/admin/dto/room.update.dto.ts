@@ -1,18 +1,22 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsOptional} from "class-validator";
+import { IsNumber, IsOptional } from "class-validator";
 
 export class UpdateRoomDto {
     @IsNumber()
-    @IsOptional()
-    roomId: number
+    @ApiProperty({
+        type: Number,
+    })
+    roomId: number;
 
     @IsNumber()
     @ApiProperty({
-        type: Number
+        type: Number,
     })
-    roomNumber: number
+    roomNumber: number;
 
     @IsNumber()
-    @IsOptional()
-    roomTypeId?: number
+    @ApiProperty({
+        type: Number,
+    })
+    roomTypeId: number;
 }

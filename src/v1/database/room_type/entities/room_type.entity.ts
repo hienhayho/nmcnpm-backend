@@ -1,6 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BeforeInsert, BeforeUpdate, OneToMany } from "typeorm";
-import * as moment from "moment-timezone"
-import { RoomService } from '../../room-service/entities/room-service.entity';
+import {
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+    CreateDateColumn,
+    UpdateDateColumn,
+    BeforeInsert,
+    BeforeUpdate,
+    OneToMany,
+    DeleteDateColumn,
+} from "typeorm";
+import * as moment from "moment-timezone";
+import { RoomService } from "../../room-service/entities/room-service.entity";
 
 @Entity()
 export class RoomType {
@@ -20,36 +30,39 @@ export class RoomType {
     priceBase: number;
 
     @Column({ nullable: true })
-    roomImage: string
+    roomImage: string;
 
     @OneToMany(() => RoomService, (roomService) => roomService.roomType, {
         eager: true,
-        cascade: true
+        cascade: true,
     })
-    roomService?: RoomService[]
+    roomService?: RoomService[];
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
+    @CreateDateColumn({
+        type: "timestamp",
+        default: () => "CURRENT_TIMESTAMP(6)",
+    })
     createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
+    @UpdateDateColumn({
+        type: "timestamp",
+        default: () => "CURRENT_TIMESTAMP(6)",
+    })
     updatedAt: Date;
+
+    @DeleteDateColumn()
+    deletedAt: Date;
 
     @BeforeInsert()
     insertCreated() {
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        this.createdAt = new Date(
-            moment().tz(timezone).format()
-        );
-        this.updatedAt = new Date(
-            moment().tz(timezone).format()
-        );
+        this.createdAt = new Date(moment().tz(timezone).format());
+        this.updatedAt = new Date(moment().tz(timezone).format());
     }
 
     @BeforeUpdate()
     insertUpdated() {
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        this.updatedAt = new Date(
-            moment().tz(timezone).format()
-        )
+        this.updatedAt = new Date(moment().tz(timezone).format());
     }
 }
