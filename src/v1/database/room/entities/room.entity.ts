@@ -25,7 +25,7 @@ export class Room {
     @ManyToOne(() => RoomType, {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
-        eager: true
+        eager: true,
     })
     roomType: RoomType;
 
