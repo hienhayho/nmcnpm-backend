@@ -7,12 +7,14 @@ import { RoomType } from './entities/room_type.entity';
 import { AddNewRoomTypeDto } from '../../admin/dto/roomType.addNewRoomType.dto';
 import { UpdateRoomTypeDto } from '@/v1/admin/dto/roomType.update.dto';
 import { DeleteRoomTypeDto } from '@/v1/admin/dto/roomType.delete.dto';
+import { Room } from '../room/entities/room.entity';
 
 @Injectable()
 export class RoomTypeService {
   constructor(
     @InjectRepository(RoomType) private roomTypeService: Repository<RoomType>,
     @InjectRepository(RoomService) private roomServiceService: Repository<RoomService>,
+    @InjectRepository(Room) private roomService: Repository<Room>,
     private serviceService: ServicesService,
   ) { }
   async getAllRoomType() {
@@ -135,7 +137,17 @@ export class RoomTypeService {
   }
 
   async deleteRoomType(roomTypeId: DeleteRoomTypeDto) {
-    const result = await this.roomTypeService.delete({
+    const room = await this.roomService.find({
+      where: {
+        roomType: {
+          id: roomTypeId.roomTypeId
+        }
+      }
+    })
+    if (room.length > 0) {
+      throw new BadRequestException({ message: `Cannot delete roomtypeid=${roomTypeId.roomTypeId} since exists room with this roomtype.` })
+    }
+    const result = await this.roomTypeService.softDelete({
       id: roomTypeId.roomTypeId
     })
     return result
